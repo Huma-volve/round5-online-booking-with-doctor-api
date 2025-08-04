@@ -11,8 +11,9 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('pages/privacy-policy', [PagesController::class, 'privacyPolicy']);
-Route::get('pages/terms-and-conditions', [PagesController::class, 'termsAndConditions']);
+
+//public routes
+Route::get('pages/{type}', [PagesController::class, 'show']);
 
 Route::get('/webhook-handler', function () {
     // Run the deploy script
