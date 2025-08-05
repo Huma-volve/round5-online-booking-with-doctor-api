@@ -23,7 +23,14 @@ Route::get('pages/{type}', [PagesController::class, 'show']);
 Route::get('faqs', [FaqController::class, 'index']);
 Route::get('faqs/{id}', [FaqController::class, 'show']);
 
+// Auth routes
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
+
+    // Auth protected routes
+    Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::resource('cards', CardController::class);
 
