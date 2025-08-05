@@ -27,6 +27,11 @@ Route::get('faqs/{id}', [FaqController::class, 'show']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// Password reset routes
+Route::post('/send-reset-otp', [AuthController::class, 'sendResetOtp']);
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     // Auth protected routes
