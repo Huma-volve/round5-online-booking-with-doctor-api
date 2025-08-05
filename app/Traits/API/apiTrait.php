@@ -10,10 +10,14 @@ trait apiTrait {
             'data' => $data
         ], $code);
     }
-    public function errorResponse($message = 'Error', $code = 400) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $message
-        ], $code);
+    public function errorResponse($errors = null, $message = 'Error', $code = 400) {
+        $response = [
+            'status' => 'Error occurred',
+            'message' => $message,
+        ];
+        if ($errors) {
+            $response['errors'] = $errors;
+        }
+        return response()->json($response, $code);
     }
 }

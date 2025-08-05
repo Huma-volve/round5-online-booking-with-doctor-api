@@ -3,15 +3,26 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Card;
+use App\Models\DoctorProfile;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
-{
+use Laravel\Sanctum\HasApiTokens;
+
+
+class User extends Authenticatable {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable , HasRoles;
+
+ 
+
+    use HasFactory, Notifiable, HasRoles, HasApiTokens;
+
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +33,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'birthdate',
+        'avatar',
     ];
 
     /**
@@ -39,11 +53,19 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
+    protected function casts(): array {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function doctorProfile() {
+        return $this->hasOne(DoctorProfile::class);
+    }
+    public function location() {
+        return $this->morphTo(Location::class, 'addressable');
+    }
+    public function cards() {
+        return $this->hasMany(Card::class);
     }
 }
