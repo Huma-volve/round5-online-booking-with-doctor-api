@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -110,4 +111,66 @@ class AuthController extends Controller
             ], 500);
         }
     }
-} 
+
+
+    public function updateProfile(UpdateProfileRequest $request)
+    {
+        $user = $request->user();
+
+        try {
+            $updateData = $request->only(['name', 'phone', 'birthdate']);
+
+            Log::info($request->only(["name"]));
+            // Handle avatar upload
+            if ($request->hasFile('avatar')) {
+                // Delete old avatar if exists
+                if ($user->avatar && file_exists(public_path('storage/' . $user->avatar))) {
+                    unlink(public_path('storage/' . $user->avatar));
+                }
+
+                // Store new avatar
+                $avatarPath = $request->file('avatar')->store('avatars', 'public');
+                $updateData['avatar'] = $avatarPath;
+            }
+
+            $user->update($updateData);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile updated successfully',
+                'data' => [
+                    'user' => new UserResource($user)
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating profile.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function me(Request $request)
+    {
+        try {
+            $user = $request->user();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'user' => new UserResource($user)
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while fetching user information.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+}
