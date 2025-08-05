@@ -18,7 +18,9 @@ return new class extends Migration {
             $table->string('phone')->nullable();
             $table->string('avatar')->nullable();
             $table->date('birthdate')->nullable();
+            $table->enum('type', ['admin', 'doctor', 'customer']);
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
 

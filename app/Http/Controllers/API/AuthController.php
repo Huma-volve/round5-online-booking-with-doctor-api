@@ -12,11 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class AuthController extends Controller
-{
+class AuthController extends Controller {
 
-    public function register(RegisterRequest $request)
-    {
+    public function register(RegisterRequest $request) {
 
         try {
             $user = User::create([
@@ -37,7 +35,6 @@ class AuthController extends Controller
                     'token_type' => 'Bearer'
                 ]
             ], 201);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -48,8 +45,7 @@ class AuthController extends Controller
     }
 
 
-    public function login(LoginRequest $request)
-    {
+    public function login(LoginRequest $request) {
 
         try {
             if (!Auth::attempt($request->only('email', 'password'))) {
@@ -81,7 +77,6 @@ class AuthController extends Controller
                     'token_type' => 'Bearer'
                 ]
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -92,8 +87,7 @@ class AuthController extends Controller
     }
 
 
-    public function logout(Request $request)
-    {
+    public function logout(Request $request) {
         try {
             $request->user()->currentAccessToken()->delete();
 
@@ -101,7 +95,6 @@ class AuthController extends Controller
                 'success' => true,
                 'message' => 'You have successfully logged out.'
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -110,4 +103,4 @@ class AuthController extends Controller
             ], 500);
         }
     }
-} 
+}
