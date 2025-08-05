@@ -205,10 +205,12 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'OTP sent successfully to your email',
+                'message' => 'OTP sent successfully to your email, ',
                 'data' => [
                     'email' => $email,
-                    'expires_at' => $expiresAt->toISOString()
+                    'expires_at' => $expiresAt->toISOString(),
+                    'note' => "OTP is {{$otp}} :returned here only for testing purposes and will be removed in production.",
+
                 ]
             ], 200);
 
