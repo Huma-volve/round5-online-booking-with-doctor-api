@@ -7,17 +7,14 @@ use Symfony\Component\Process\Process;
 
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\DoctorController;
-
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\Api\CardController;
 use App\Http\Controllers\API\Pages\PagesController;
 use App\Http\Controllers\API\UserProfileController;
-use App\Http\Controllers\DoctorController;
-use App\Http\Controllers\FaqController;
+use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\SpecialistController;
 use App\Http\Controllers\AppointmentController;
-use App\Http\Controllers\API\Pages\PagesController;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 Route::get('/user', function (Request $request) {
@@ -67,6 +64,18 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/profile', [AuthController::class, 'updateProfile']);
 
     Route::resource('cards', CardController::class);
+    
+    // Notification routes
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::get('/{id}', [NotificationController::class, 'show']);
+        Route::patch('/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
+        Route::patch('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+        Route::delete('/{id}', [NotificationController::class, 'destroy']);
+        Route::delete('/', [NotificationController::class, 'destroyAll']);
+    });
+    
     Route::prefix('admin')->middleware('role:admin')->group(function () {
         Route::resource('faqs', FaqController::class);
         Route::resource('pages', PagesController::class);
