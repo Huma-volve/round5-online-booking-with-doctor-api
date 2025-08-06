@@ -11,6 +11,10 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\Api\CardController;
+use App\Http\Controllers\API\Pages\PagesController;
+use App\Http\Controllers\API\UserProfileController;
+use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\SpecialistController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\API\Pages\PagesController;
@@ -54,6 +58,8 @@ Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/profile', [UserProfileController::class, 'index']);
+    Route::put('/profile', [UserProfileController::class, 'update']);
 
     // Auth protected routes
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -61,7 +67,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/profile', [AuthController::class, 'updateProfile']);
 
     Route::resource('cards', CardController::class);
-
     Route::prefix('admin')->middleware('role:admin')->group(function () {
         Route::resource('faqs', FaqController::class);
         Route::resource('pages', PagesController::class);
@@ -82,21 +87,3 @@ Route::get('/webhook-handler', function () {
 });
 
 
-Route::get('doctors', [DoctorController::class, 'index'])->middleware('auth:sanctum');
-Route::get('doctors/{id}', [DoctorController::class, 'show'])->middleware('auth:sanctum');
-Route::get('specialities', [SpecialistController::class, 'index'])->middleware('auth:sanctum');
-Route::get('specialities/{id}', [SpecialistController::class, 'show'])->middleware('auth:sanctum');
-Route::get('doctors/search', [DoctorController::class, 'search']);
-
-
-Route::get('/webhook-handler', function () {
-    $process = new Process(['/bin/bash', '/home/digital07/round5-online-booking-with-doctor-api.digital-vision-solutions.com/deploy.sh']);
-
-    try {
-        $process->mustRun();
-    } catch (ProcessFailedException $exception) {
-        return response('Deployment failed: ' . $exception->getMessage(), 500);
-    }
-
-    return response('Deployment completed successfully.', 200);
-});

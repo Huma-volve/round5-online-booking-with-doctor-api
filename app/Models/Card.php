@@ -11,6 +11,8 @@ class Card extends Model {
         'brand',
         'exp_month',
         'exp_year',
+        'last_four',
+        'stripe_pm_id',
     ];
 
     public function user() {

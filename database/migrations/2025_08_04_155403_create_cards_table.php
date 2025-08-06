@@ -12,8 +12,8 @@ return new class extends Migration {
         Schema::create('cards', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('card_holder_name')->unique();
-            $table->unsignedInteger('last_four');
+            $table->string('card_holder_name');
+            $table->string('last_four');
             $table->string('brand');
             $table->string('exp_month');
             $table->string('exp_year');
