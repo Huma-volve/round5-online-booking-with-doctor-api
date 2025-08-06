@@ -110,12 +110,9 @@ class AuthController extends Controller {
             ], 500);
         }
     }
-<<<<<<< HEAD
-=======
 
 
-    public function updateProfile(UpdateProfileRequest $request)
-    {
+    public function updateProfile(UpdateProfileRequest $request) {
         $user = $request->user();
 
         try {
@@ -143,7 +140,6 @@ class AuthController extends Controller {
                     'user' => new UserResource($user)
                 ]
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -154,8 +150,7 @@ class AuthController extends Controller {
     }
 
 
-    public function me(Request $request)
-    {
+    public function me(Request $request) {
         try {
             $user = $request->user();
 
@@ -165,7 +160,6 @@ class AuthController extends Controller {
                     'user' => new UserResource($user)
                 ]
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -176,8 +170,7 @@ class AuthController extends Controller {
     }
 
 
-    public function sendResetOtp(SendResetOtpRequest $request)
-    {
+    public function sendResetOtp(SendResetOtpRequest $request) {
         try {
             $email = $request->email;
 
@@ -208,7 +201,6 @@ class AuthController extends Controller {
 
                 ]
             ], 200);
-
         } catch (\Exception $e) {
             Log::error('Error sending reset OTP: ' . $e->getMessage());
             return response()->json([
@@ -219,8 +211,7 @@ class AuthController extends Controller {
         }
     }
 
-    public function verifyOtp(VerifyOtpRequest $request)
-    {
+    public function verifyOtp(VerifyOtpRequest $request) {
         try {
             $email = $request->email;
             $otp = $request->otp;
@@ -246,7 +237,6 @@ class AuthController extends Controller {
                     'otp' => $otp
                 ]
             ], 200);
-
         } catch (\Exception $e) {
             Log::error('Error verifying OTP: ' . $e->getMessage());
             return response()->json([
@@ -258,8 +248,7 @@ class AuthController extends Controller {
     }
 
 
-    public function resetPassword(ResetPasswordRequest $request)
-    {
+    public function resetPassword(ResetPasswordRequest $request) {
         try {
             $email = $request->email;
             $otp = $request->otp;
@@ -300,7 +289,6 @@ class AuthController extends Controller {
                 'success' => true,
                 'message' => 'Password reset successfully'
             ], 200);
-
         } catch (\Exception $e) {
             Log::error('Error resetting password: ' . $e->getMessage());
             return response()->json([
@@ -310,5 +298,4 @@ class AuthController extends Controller {
             ], 500);
         }
     }
->>>>>>> 8d73d064c519d168e98e48fe58429ed772446ae6
 }
