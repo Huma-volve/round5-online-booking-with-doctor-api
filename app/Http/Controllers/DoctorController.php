@@ -1,16 +1,40 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Models\Specialty;
+namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
-Route::get('/', function () {
-    return view('welcome');
-});
+use App\Models\DoctorProfile;
+use App\Models\Specialty;
+use App\Traits\API\apiTrait;
+
+//   public function successResponse($data = [], $message = 'Success', $code = 200) {
+//         return response()->json([
+//             'status' => 'success',
+//             'message' => $message,
+//             'data' => $data
+//         ], $code);
+//     }
+
+class DoctorController extends Controller
+{
+        use apiTrait;
+
+    public function index(){
+        $doctors=DoctorProfile::all();
+        return $this->successResponse($data = $doctors, $message = 'Success',200);
+    }
+
+    public function show($id) {
+        $doctor = DoctorProfile::find($id);
+        if (!$doctor) {
+            return $this->errorResponse('Doctor not found', 404);
+        }
+        return $this->successResponse($doctor, 'Doctor retrieved successfully', 200);
+    }
 
 
-
-Route::get('/test', function(Request $request) {
-    $request->validate([
+    public function search(Request $request) {
+     $request->validate([
         'name' => 'nullable|string',
         'specialties' => 'nullable|string',
         'city' => 'nullable|string',
@@ -34,7 +58,7 @@ Route::get('/test', function(Request $request) {
             'locations.city',
             'locations.address'
         );
-// dd($query->get());
+
     if ($request->filled('name')) {
         $query->where('users.name', 'LIKE', '%' . $request->name . '%');
     }
@@ -57,9 +81,7 @@ Route::get('/test', function(Request $request) {
 
     $doctors = $query->get();
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Filtered doctors retrieved successfully',
-        'data' => $doctors
-    ]);
-});
+        return $this->successResponse($doctors, 'Doctor retrieved successfully', 200);
+    }
+
+}
