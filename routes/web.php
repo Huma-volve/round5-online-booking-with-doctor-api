@@ -1,65 +1,26 @@
 <?php
 
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Specialty;
 use Illuminate\Http\Request;
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard');
+})->middleware('auth');
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::resource('users',UserController::class);
 
 
-Route::get('/test', function(Request $request) {
-    $request->validate([
-        'name' => 'nullable|string',
-        'specialties' => 'nullable|string',
-        'city' => 'nullable|string',
-        'address' => 'nullable|string',
-        'rating' => 'nullable|string',
-    ]);
 
-    $query = Specialty::query()
-        ->join('doctor_profiles', 'specialties.id', '=', 'doctor_profiles.specialties_id')
-        ->join('users', 'doctor_profiles.user_id', '=', 'users.id')
-        ->join('locations', function ($join) {
-            $join->on('users.id', '=', 'locations.addressable_id')
-                 ->where('locations.addressable_type', '=', 'App\\Models\\User');
-        })
-        ->select(
-            'doctor_profiles.*',
-            'users.name',
-            'users.phone',
-            'users.avatar',
-            'users.email',
-            'locations.city',
-            'locations.address'
-        );
-// dd($query->get());
-    if ($request->filled('name')) {
-        $query->where('users.name', 'LIKE', '%' . $request->name . '%');
-    }
-
-    if ($request->filled('specialties')) {
-        $query->where('specialties.name', $request->specialties);
-    }
-
-    if ($request->filled('city')) {
-        $query->where('locations.city', 'LIKE', '%' . $request->city . '%');
-    }
-
-    if ($request->filled('address')) {
-        $query->where('locations.address', 'LIKE', '%' . $request->address . '%');
-    }
-
-    if ($request->filled('rating')) {
-        $query->where('doctor_profiles.rating', '>=', $request->rating);
-    }
-
-    $doctors = $query->get();
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Filtered doctors retrieved successfully',
-        'data' => $doctors
-    ]);
-});
+require __DIR__.'/auth.php';
