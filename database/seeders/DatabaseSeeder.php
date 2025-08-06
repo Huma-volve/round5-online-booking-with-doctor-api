@@ -12,13 +12,10 @@ class DatabaseSeeder extends Seeder {
      * Seed the application's database.
      */
     public function run(): void {
-        // User::factory(10)->create();
-        User::create([
-            'name'=>'Admin',
-            'email'=>'admin@admin.com',
-            'password'=>Hash::make('password'),
-            'type' => 'admin',
-            'phone' => '1234567890',
-        ]);
+        $this->call(RolesSeeder::class);
+        $this->call(HospitalSeeder::class);
+        $this->call(SpecialistSeeder::class);
+        $this->call(DoctorProfileSeeder::class);
+        $this->call(LocationSeeder::class);
     }
 }

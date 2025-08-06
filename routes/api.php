@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Route;
 use Symfony\Component\Process\Process;
 use App\Http\Controllers\API\Pages\PagesController;
 use App\Http\Controllers\API\UserProfileController;
+use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\SpecialistController;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 Route::get('/user', function (Request $request) {
@@ -61,3 +63,9 @@ Route::get('/webhook-handler', function () {
 
     return response('Deployment completed successfully.', 200);
 });
+
+Route::get('doctors',[DoctorController::class,'index'])->middleware('auth:sanctum');
+Route::get('doctors/{id}',[DoctorController::class,'show'])->middleware('auth:sanctum');
+Route::get('specialities',[SpecialistController::class,'index'])->middleware('auth:sanctum');
+Route::get('specialities/{id}',[SpecialistController::class,'show'])->middleware('auth:sanctum');
+Route::get('doctors/search', [DoctorController::class, 'search']);
