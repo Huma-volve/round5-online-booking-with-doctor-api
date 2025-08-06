@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
 use App\Models\Card;
 use App\Models\DoctorProfile;
 use Spatie\Permission\Traits\HasRoles;
@@ -20,6 +21,7 @@ class User extends Authenticatable {
     use HasFactory, Notifiable, HasRoles, HasApiTokens;
 
 
+
     /**
      * The attributes that are mass assignable.
      *
@@ -29,9 +31,12 @@ class User extends Authenticatable {
         'name',
         'email',
         'password',
+
+
         'phone',
         'birthdate',
         'avatar',
+
     ];
 
     /**
@@ -49,12 +54,15 @@ class User extends Authenticatable {
      *
      * @return array<string, string>
      */
+
     protected function casts(): array {
+
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
+
     public function doctorProfile() {
         return $this->hasOne(DoctorProfile::class);
     }
@@ -64,4 +72,5 @@ class User extends Authenticatable {
     public function cards() {
         return $this->hasMany(Card::class);
     }
+
 }
