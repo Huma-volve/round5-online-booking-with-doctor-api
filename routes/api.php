@@ -1,17 +1,19 @@
 <?php
 
-use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\Api\CardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\Process\Process;
+use App\Http\Controllers\AppointmentController;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use App\Http\Controllers\StripeController;
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\Api\CardController;
 use App\Http\Controllers\API\Pages\PagesController;
 use App\Http\Controllers\API\UserProfileController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\SpecialistController;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 
 Route::get('/user', function (Request $request) {
     $user = $request->user();
@@ -19,6 +21,21 @@ Route::get('/user', function (Request $request) {
         'user' => $user, // Spatie returns a collection of role names
     ];
 })->middleware('auth:sanctum');
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/doctors/{doctor}/available-slots', [AppointmentController::class, 'availableSlots']);
+    Route::post('/appointments', [AppointmentController::class, 'book']);
+    Route::get('/my-bookings', [AppointmentController::class, 'myBookings']);
+    Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel']);
+    Route::post('/appointments/stripe-session', [StripeController::class, 'createStripeSession']);
+    Route::get('/doctors/{doctor}/available-slots', [AppointmentController::class, 'availableSlots']);
+    Route::post('/appointments', [AppointmentController::class, 'book']);
+    Route::get('/my-bookings', [AppointmentController::class, 'myBookings']);
+    Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel']);
+    Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook']);
+});
 
 
 //public routes
@@ -64,8 +81,4 @@ Route::get('/webhook-handler', function () {
     return response('Deployment completed successfully.', 200);
 });
 
-Route::get('doctors',[DoctorController::class,'index'])->middleware('auth:sanctum');
-Route::get('doctors/{id}',[DoctorController::class,'show'])->middleware('auth:sanctum');
-Route::get('specialities',[SpecialistController::class,'index'])->middleware('auth:sanctum');
-Route::get('specialities/{id}',[SpecialistController::class,'show'])->middleware('auth:sanctum');
-Route::get('doctors/search', [DoctorController::class, 'search']);
+

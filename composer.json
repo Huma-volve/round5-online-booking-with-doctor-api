@@ -10,14 +10,15 @@
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
-
-
+        "laravel/ui": "^4.6",
         "spatie/laravel-permission": "^6.21",
         "stripe/stripe-php": "^17.5"
-
     },
+  
+   
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "stripe/stripe-php": "^17.5",
         "laravel/breeze": "^2.3",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.13",
