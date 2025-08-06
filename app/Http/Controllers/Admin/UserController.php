@@ -23,7 +23,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $roles = Role::all();
+        $user = new User(); 
+        return view('admin.users.create', compact('roles', 'user'));
     }
 
     /**
@@ -31,7 +33,22 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password'=> 'required|string|min:8',
+            'role' => 'required|exists:roles,name',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+        $user->assignRole($request->role);
+
+        return redirect()->route('users.index');
+
     }
 
     /**
