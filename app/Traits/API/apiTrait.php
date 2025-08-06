@@ -10,7 +10,7 @@ trait apiTrait {
             'data' => $data
         ], $code);
     }
-    public function errorResponse($message = 'Error', $code = 400, $errors = null) {
+    public function errorResponse($errors = null, $message = 'Error', $code = 400) {
         $response = [
             'status' => 'Error occurred',
             'message' => $message,

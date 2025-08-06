@@ -45,10 +45,10 @@ class UserProfileController extends Controller {
     }
     public function destory(Request $request) {
         if (!$request->filled('password')) {
-            return $this->errorResponse('You have to confirm your password', 403);
+            return $this->errorResponse(null, 'You have to confirm your password', 403);
         }
         if (!Hash::check($request->password, $this->user->password)) {
-            return $this->errorResponse('Password is incorrect', 403);
+            return $this->errorResponse(null, 'Password is incorrect', 403);
         }
         //Soft-delete
         $this->user->delete();
