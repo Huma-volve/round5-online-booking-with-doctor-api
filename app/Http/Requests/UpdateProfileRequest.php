@@ -25,6 +25,7 @@ class UpdateProfileRequest extends FormRequest
             'name' => 'sometimes|string|max:255',
             'phone' => 'sometimes|string|max:20',
             'birthdate' => 'sometimes|date|before:today',
+            'avatar' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 
@@ -44,6 +45,10 @@ class UpdateProfileRequest extends FormRequest
 
             'birthdate.date' => 'Birthdate must be a valid date',
             'birthdate.before' => 'Birthdate must be before today',
+            
+            'avatar.image' => 'Avatar must be an image file',
+            'avatar.mimes' => 'Avatar must be a file of type: jpeg, png, jpg, gif',
+            'avatar.max' => 'Avatar may not be greater than 2MB',
         ];
     }
 } 
