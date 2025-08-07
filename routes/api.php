@@ -69,8 +69,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('/', [NotificationController::class, 'destroyAll']);
     });
 
-    
-    
+
+
     // Notification routes
     Route::prefix('notifications')->group(function () {
         Route::get('/', [NotificationController::class, 'index']);
@@ -81,7 +81,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('/{id}', [NotificationController::class, 'destroy']);
         Route::delete('/', [NotificationController::class, 'destroyAll']);
     });
-    
+
 
     Route::prefix('admin')->middleware('role:admin')->group(function () {
         Route::resource('faqs', FaqController::class);
@@ -142,5 +142,6 @@ Route::get('/webhook-handler', function () {
     }
 
     return response('Deployment completed successfully.', 200);
+});
 });
 
