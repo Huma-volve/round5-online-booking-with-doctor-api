@@ -8,18 +8,16 @@ use App\Traits\API\apiTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class NotificationController extends Controller
-{
+class NotificationController extends Controller {
     use apiTrait;
 
     /**
      * Get all notifications for the authenticated user
      */
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
         try {
             $user = Auth::user();
-            
+
             $query = Notification::where('notifiable_type', 'App\Models\User')
                 ->where('notifiable_id', $user->id);
 
@@ -61,7 +59,6 @@ class NotificationController extends Controller
                 'Notifications retrieved successfully',
                 200
             );
-
         } catch (\Exception $e) {
             return $this->errorResponse(
                 null,
@@ -74,11 +71,10 @@ class NotificationController extends Controller
     /**
      * Get unread notifications count
      */
-    public function unreadCount()
-    {
+    public function unreadCount() {
         try {
             $user = Auth::user();
-            
+
             $count = Notification::where('notifiable_type', 'App\Models\User')
                 ->where('notifiable_id', $user->id)
                 ->whereNull('read_at')
@@ -89,7 +85,6 @@ class NotificationController extends Controller
                 'Unread notifications count retrieved successfully',
                 200
             );
-
         } catch (\Exception $e) {
             return $this->errorResponse(
                 null,
@@ -102,11 +97,10 @@ class NotificationController extends Controller
     /**
      * Mark notification as read
      */
-    public function markAsRead($id)
-    {
+    public function markAsRead($id) {
         try {
             $user = Auth::user();
-            
+
             $notification = Notification::where('id', $id)
                 ->where('notifiable_type', 'App\Models\User')
                 ->where('notifiable_id', $user->id)
@@ -131,7 +125,6 @@ class NotificationController extends Controller
                 'Notification marked as read successfully',
                 200
             );
-
         } catch (\Exception $e) {
             return $this->errorResponse(
                 null,
@@ -144,11 +137,10 @@ class NotificationController extends Controller
     /**
      * Mark all notifications as read
      */
-    public function markAllAsRead()
-    {
+    public function markAllAsRead() {
         try {
             $user = Auth::user();
-            
+
             $updatedCount = Notification::where('notifiable_type', 'App\Models\User')
                 ->where('notifiable_id', $user->id)
                 ->whereNull('read_at')
@@ -159,7 +151,6 @@ class NotificationController extends Controller
                 'All notifications marked as read successfully',
                 200
             );
-
         } catch (\Exception $e) {
             return $this->errorResponse(
                 null,
@@ -172,11 +163,10 @@ class NotificationController extends Controller
     /**
      * Delete a notification
      */
-    public function destroy($id)
-    {
+    public function destroy($id) {
         try {
             $user = Auth::user();
-            
+
             $notification = Notification::where('id', $id)
                 ->where('notifiable_type', 'App\Models\User')
                 ->where('notifiable_id', $user->id)
@@ -197,7 +187,6 @@ class NotificationController extends Controller
                 'Notification deleted successfully',
                 200
             );
-
         } catch (\Exception $e) {
             return $this->errorResponse(
                 null,
@@ -210,11 +199,10 @@ class NotificationController extends Controller
     /**
      * Delete all notifications
      */
-    public function destroyAll()
-    {
+    public function destroyAll() {
         try {
             $user = Auth::user();
-            
+
             $deletedCount = Notification::where('notifiable_type', 'App\Models\User')
                 ->where('notifiable_id', $user->id)
                 ->delete();
@@ -224,7 +212,6 @@ class NotificationController extends Controller
                 'All notifications deleted successfully',
                 200
             );
-
         } catch (\Exception $e) {
             return $this->errorResponse(
                 null,
@@ -237,11 +224,10 @@ class NotificationController extends Controller
     /**
      * Get notification by ID
      */
-    public function show($id)
-    {
+    public function show($id) {
         try {
             $user = Auth::user();
-            
+
             $notification = Notification::where('id', $id)
                 ->where('notifiable_type', 'App\Models\User')
                 ->where('notifiable_id', $user->id)
@@ -273,7 +259,6 @@ class NotificationController extends Controller
                 'Notification retrieved successfully',
                 200
             );
-
         } catch (\Exception $e) {
             return $this->errorResponse(
                 null,
@@ -282,4 +267,4 @@ class NotificationController extends Controller
             );
         }
     }
-} 
+}

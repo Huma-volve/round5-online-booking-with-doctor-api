@@ -18,7 +18,7 @@ class PagesController extends Controller {
     public function show(string $type) {
         $page = Page::where('type', $type)->first();
         if (!$page) {
-            return $this->errorResponse('Page not found', 404);
+            return $this->errorResponse(null, 'Page not found', 404);
         }
         return $this->successResponse(PagesResourse::collection($page));
     }
@@ -37,7 +37,7 @@ class PagesController extends Controller {
     public function update($id, Request $request) {
         $page = Page::find($id);
         if (!$page) {
-            return $this->errorResponse('Page not found', 404);
+            return $this->errorResponse(null, 'Page not found', 404);
         }
         $data = $request->validate([
             'title' => 'required|string|max:255',
@@ -50,7 +50,7 @@ class PagesController extends Controller {
     public function destroy($id) {
         $page = Page::find($id);
         if (!$page) {
-            return $this->errorResponse('Page not found', 404);
+            return $this->errorResponse(null, 'Page not found', 404);
         }
         $page->delete();
         return $this->successResponse([], 'Page deleted successfully');
