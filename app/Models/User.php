@@ -33,7 +33,7 @@ class User extends Authenticatable {
         'phone',
         'birthdate',
         'avatar',
-
+        'is_notifiable'
     ];
 
     /**
