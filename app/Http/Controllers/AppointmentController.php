@@ -8,122 +8,123 @@ use App\Models\Appointment;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
-class AppointmentController extends Controller
-{
-    
-public function availableSlots($doctorId)
-{
-   
-    $startDate = Carbon::today();
-    $endDate = Carbon::today()->addDays(7);
+class AppointmentController extends Controller {
+
+    public function availableSlots($doctorId) {
+
+        $startDate = Carbon::today();
+        $endDate = Carbon::today()->addDays(7);
 
 
-    $availableTimes = [
-        '09:00', '10:00', '11:00', '12:00',
-        '13:00', '14:00', '15:00', '16:00'
-    ];
+        $availableTimes = [
+            '09:00',
+            '10:00',
+            '11:00',
+            '12:00',
+            '13:00',
+            '14:00',
+            '15:00',
+            '16:00'
+        ];
 
-    $slots = [];
+        $slots = [];
 
-    for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
-        foreach ($availableTimes as $time) {
-            $alreadyBooked = Appointment::where('doctor_id', $doctorId)
-                ->where('date', $date->toDateString())
-                ->where('time', $time)
-                ->whereIn('status', ['pending', 'confirmed'])
-                ->exists();
+        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
+            foreach ($availableTimes as $time) {
+                $alreadyBooked = Appointment::where('doctor_id', $doctorId)
+                    ->where('date', $date->toDateString())
+                    ->where('time', $time)
+                    ->whereIn('status', ['pending', 'confirmed'])
+                    ->exists();
 
-            if (!$alreadyBooked) {
-                $slots[] = [
-                    'date' => $date->toDateString(),
-                    'time' => $time,
-                ];
+                if (!$alreadyBooked) {
+                    $slots[] = [
+                        'date' => $date->toDateString(),
+                        'time' => $time,
+                    ];
+                }
             }
         }
+
+        return response()->json([
+            'doctor_id' => $doctorId,
+            'available_slots' => $slots,
+        ]);
     }
 
-    return response()->json([
-        'doctor_id' => $doctorId,
-        'available_slots' => $slots,
-    ]);
-}
+    public function book(Request $request) {
+        $request->validate([
+            'doctor_id' => 'required|exists:users,id',
+            'date'      => 'required|date|after_or_equal:today',
+            'time'      => 'required|date_format:H:i',
+        ]);
 
-public function book(Request $request)
-{
-    $request->validate([
-        'doctor_id' => 'required|exists:users,id',
-        'date'      => 'required|date|after_or_equal:today',
-        'time'      => 'required|date_format:H:i',
-    ]);
+        $userId = Auth::id();
 
-    $userId = Auth::id();
 
-    
-    $alreadyBooked = Appointment::where('doctor_id', $request->doctor_id)
-        ->where('date', $request->date)
-        ->where('time', $request->time)
-        ->whereIn('status', ['pending', 'confirmed'])
-        ->exists();
+        $alreadyBooked = Appointment::where('doctor_id', $request->doctor_id)
+            ->where('date', $request->date)
+            ->where('time', $request->time)
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->exists();
 
-    if ($alreadyBooked) {
-        return response()->json(['message' => 'This time slot is already booked.'], 409);
+        if ($alreadyBooked) {
+            return response()->json(['message' => 'This time slot is already booked.'], 409);
+        }
+
+        $appointment = Appointment::create([
+            'user_id' => $userId,
+            'doctor_id' => $request->doctor_id,
+            'date' => $request->date,
+            'time' => $request->time,
+            'status' => 'pending',
+        ]);
+
+        return response()->json([
+            'message' => 'Appointment booked successfully.',
+            'appointment' => $appointment,
+        ], 201);
     }
+    public function myBookings(Request $request) {
+        $userId = Auth::id();
+        $filter = $request->query('filter', 'upcoming');
 
-    $appointment = Appointment::create([
-        'user_id' => $userId,
-        'doctor_id' => $request->doctor_id,
-        'date' => $request->date,
-        'time' => $request->time,
-        'status' => 'pending', 
-    ]);
+        $query = Appointment::with('doctor')
+            ->where('user_id', $userId);
 
-    return response()->json([
-        'message' => 'Appointment booked successfully.',
-        'appointment' => $appointment,
-    ], 201);
-}
-public function myBookings(Request $request)
-{
-    $userId = Auth::id();
-    $filter = $request->query('filter', 'upcoming');
+        if ($filter === 'upcoming') {
+            $query->whereDate('date', '>=', Carbon::today());
+        } elseif ($filter === 'past') {
+            $query->whereDate('date', '<', Carbon::today());
+        }
 
-    $query = Appointment::with('doctor')
-        ->where('user_id', $userId);
+        $appointments = $query->orderBy('date', 'asc')->get();
 
-    if ($filter === 'upcoming') {
-        $query->whereDate('date', '>=', Carbon::today());
-    } elseif ($filter === 'past') {
-        $query->whereDate('date', '<', Carbon::today());
+        return response()->json([
+            'filter' => $filter,
+            'appointments' => $appointments,
+        ]);
     }
+    public function cancel($id) {
+        $appointment = Appointment::find($id);
 
-    $appointments = $query->orderBy('date', 'asc')->get();
+        if (!$appointment) {
+            return response()->json(['message' => 'Appointment not found.'], 404);
+        }
 
-    return response()->json([
-        'filter' => $filter,
-        'appointments' => $appointments,
-    ]);
-}
-public function cancel($id)
-{
-    $appointment = Appointment::find($id);
 
-    if (!$appointment) {
-        return response()->json(['message' => 'Appointment not found.'], 404);
+        if ($appointment->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+
+        if (Carbon::parse($appointment->date)->lt(Carbon::today())) {
+            return response()->json(['message' => 'Cannot cancel a past appointment.'], 400);
+        }
+
+
+        $appointment->update(['status' => 'cancelled']);
+
+        return response()->json(['message' => 'Appointment cancelled successfully.']);
     }
-
-    
-    if ($appointment->user_id !== Auth::id()) {
-        return response()->json(['message' => 'Unauthorized'], 403);
-    }
-
-    
-    if (Carbon::parse($appointment->date)->lt(Carbon::today())) {
-        return response()->json(['message' => 'Cannot cancel a past appointment.'], 400);
-    }
-
-    
-    $appointment->update(['status' => 'cancelled']);
-
-    return response()->json(['message' => 'Appointment cancelled successfully.']);
-}
 }

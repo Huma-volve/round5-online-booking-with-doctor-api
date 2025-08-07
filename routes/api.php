@@ -6,18 +6,13 @@ use Illuminate\Support\Facades\Route;
 use Symfony\Component\Process\Process;
 
 use App\Http\Controllers\FaqController;
-use App\Http\Controllers\DoctorController;
-
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\Api\CardController;
 use App\Http\Controllers\API\Pages\PagesController;
 use App\Http\Controllers\API\UserProfileController;
-use App\Http\Controllers\DoctorController;
-use App\Http\Controllers\FaqController;
 use App\Http\Controllers\SpecialistController;
 use App\Http\Controllers\AppointmentController;
-use App\Http\Controllers\API\Pages\PagesController;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 Route::get('/user', function (Request $request) {
@@ -26,21 +21,6 @@ Route::get('/user', function (Request $request) {
         'user' => $user, // Spatie returns a collection of role names
     ];
 })->middleware('auth:sanctum');
-
-
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/doctors/{doctor}/available-slots', [AppointmentController::class, 'availableSlots']);
-    Route::post('/appointments', [AppointmentController::class, 'book']);
-    Route::get('/my-bookings', [AppointmentController::class, 'myBookings']);
-    Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel']);
-    Route::post('/appointments/stripe-session', [StripeController::class, 'createStripeSession']);
-    Route::get('/doctors/{doctor}/available-slots', [AppointmentController::class, 'availableSlots']);
-    Route::post('/appointments', [AppointmentController::class, 'book']);
-    Route::get('/my-bookings', [AppointmentController::class, 'myBookings']);
-    Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel']);
-    Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook']);
-});
 
 
 //public routes
@@ -57,21 +37,40 @@ Route::post('/send-reset-otp', [AuthController::class, 'sendResetOtp']);
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/profile', [UserProfileController::class, 'index']);
-    Route::put('/profile', [UserProfileController::class, 'update']);
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/doctors/{doctor}/available-slots', [AppointmentController::class, 'availableSlots']);
+    Route::post('/appointments', [AppointmentController::class, 'book']);
+    Route::get('/my-bookings', [AppointmentController::class, 'myBookings']);
+    Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel']);
+    Route::post('/appointments/stripe-session', [StripeController::class, 'createStripeSession']);
+    Route::get('/doctors/{doctor}/available-slots', [AppointmentController::class, 'availableSlots']);
+    Route::post('/appointments', [AppointmentController::class, 'book']);
+    Route::get('/my-bookings', [AppointmentController::class, 'myBookings']);
+    Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel']);
+    Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook']);
+
+
+    //Route for users cards
+    Route::resource('cards', CardController::class);
 
     // Auth protected routes
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/profile', [AuthController::class, 'updateProfile']);
+    // Route::get('/profile', [UserProfileController::class, 'index']);
+    // Route::put('/profile', [UserProfileController::class, 'update']);
 
-    Route::resource('cards', CardController::class);
+    //Admin routes
     Route::prefix('admin')->middleware('role:admin')->group(function () {
         Route::resource('faqs', FaqController::class);
         Route::resource('pages', PagesController::class);
     });
 });
+
+
+
 
 Route::get('/webhook-handler', function () {
     // Run the deploy script
@@ -85,5 +84,3 @@ Route::get('/webhook-handler', function () {
 
     return response('Deployment completed successfully.', 200);
 });
-
-

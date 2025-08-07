@@ -12,6 +12,7 @@ use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\PasswordResetOtp;
+use App\Traits\API\apiTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller {
-
+    use apiTrait;
     public function register(RegisterRequest $request) {
 
         try {
@@ -114,7 +115,6 @@ class AuthController extends Controller {
 
     public function updateProfile(UpdateProfileRequest $request) {
         $user = $request->user();
-
         try {
             $updateData = $request->only(['name', 'phone', 'birthdate']);
 
@@ -294,6 +294,23 @@ class AuthController extends Controller {
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while resetting password.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function is_notifiable(Request $request) {
+        try {
+            $user = User::find(Auth::id());
+            $request->validate([
+                'is_notifiable' => 'required|boolean'
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error handle notification for the user' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while verifying OTP.',
                 'error' => $e->getMessage()
             ], 500);
         }
