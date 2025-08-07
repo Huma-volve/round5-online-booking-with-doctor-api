@@ -4,7 +4,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\Process\Process;
+<<<<<<< HEAD
 use App\Http\Controllers\API\Pages\PagesController;
+=======
+
+use App\Http\Controllers\FaqController;
+use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\StripeController;
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\Api\CardController;
+use App\Http\Controllers\API\Pages\PagesController;
+use App\Http\Controllers\API\UserProfileController;
+use App\Http\Controllers\API\NotificationController;
+use App\Http\Controllers\SpecialistController;
+use App\Http\Controllers\AppointmentController;
+>>>>>>> 624c06ca54501a957b2c6a7396845ab2d261256e
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 Route::get('/user', function (Request $request) {
@@ -12,8 +26,65 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/doctors/{doctor}/available-slots', [AppointmentController::class, 'availableSlots']);
+    Route::post('/appointments', [AppointmentController::class, 'book']);
+    Route::get('/my-bookings', [AppointmentController::class, 'myBookings']);
+    Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel']);
+    Route::post('/appointments/stripe-session', [StripeController::class, 'createStripeSession']);
+    Route::get('/doctors/{doctor}/available-slots', [AppointmentController::class, 'availableSlots']);
+    Route::post('/appointments', [AppointmentController::class, 'book']);
+    Route::get('/my-bookings', [AppointmentController::class, 'myBookings']);
+    Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel']);
+    Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook']);
+});
+
+
 //public routes
 Route::get('pages/{type}', [PagesController::class, 'show']);
+<<<<<<< HEAD
+=======
+Route::get('faqs', [FaqController::class, 'index']);
+Route::get('faqs/{id}', [FaqController::class, 'show']);
+
+// Auth routes
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+// Password reset routes
+Route::post('/send-reset-otp', [AuthController::class, 'sendResetOtp']);
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/profile', [UserProfileController::class, 'index']);
+    Route::put('/profile', [UserProfileController::class, 'update']);
+
+    // Auth protected routes
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/profile', [AuthController::class, 'updateProfile']);
+
+    Route::resource('cards', CardController::class);
+    
+    // Notification routes
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::get('/{id}', [NotificationController::class, 'show']);
+        Route::patch('/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
+        Route::patch('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+        Route::delete('/{id}', [NotificationController::class, 'destroy']);
+        Route::delete('/', [NotificationController::class, 'destroyAll']);
+    });
+    
+    Route::prefix('admin')->middleware('role:admin')->group(function () {
+        Route::resource('faqs', FaqController::class);
+        Route::resource('pages', PagesController::class);
+    });
+});
+>>>>>>> 624c06ca54501a957b2c6a7396845ab2d261256e
 
 Route::get('/webhook-handler', function () {
     // Run the deploy script
@@ -27,3 +98,5 @@ Route::get('/webhook-handler', function () {
 
     return response('Deployment completed successfully.', 200);
 });
+
+

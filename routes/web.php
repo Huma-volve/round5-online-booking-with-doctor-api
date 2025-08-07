@@ -1,10 +1,21 @@
 <?php
 
+<<<<<<< HEAD
 use App\Http\Controllers\Admin\DoctorController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\ProfileController;
+=======
+
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+    return view('welcome');
+});
+
+>>>>>>> 624c06ca54501a957b2c6a7396845ab2d261256e
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\ProfileController;
+
+use App\Models\Specialty;
+use Illuminate\Http\Request;
 Route::get('/', function () {
     return view('dashboard');
 })->middleware('auth');
