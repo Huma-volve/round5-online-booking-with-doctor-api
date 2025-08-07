@@ -29,6 +29,7 @@ Route::get('/user', function (Request $request) {
 
 
 Route::middleware('auth:sanctum')->group(function () {
+    //Booking system {appointments}
     Route::get('/doctors/{doctor}/available-slots', [AppointmentController::class, 'availableSlots']);
     Route::post('/appointments', [AppointmentController::class, 'book']);
     Route::get('/my-bookings', [AppointmentController::class, 'myBookings']);
@@ -39,6 +40,53 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/my-bookings', [AppointmentController::class, 'myBookings']);
     Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel']);
     Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook']);
+
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/profile', [UserProfileController::class, 'index']);
+    Route::put('/profile', [UserProfileController::class, 'update']);
+    Route::get('/profile', [UserProfileController::class, 'index']);
+    Route::put('/profile', [UserProfileController::class, 'update']);
+
+
+    // Auth protected routes
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/profile', [AuthController::class, 'updateProfile']);
+    // Route::get('/profile', [UserProfileController::class, 'index']);
+    // Route::put('/profile', [UserProfileController::class, 'update']);
+    //Card Routes
+    Route::resource('cards', CardController::class);
+
+    // Notification routes
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::get('/{id}', [NotificationController::class, 'show']);
+        Route::patch('/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
+        Route::patch('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+        Route::delete('/{id}', [NotificationController::class, 'destroy']);
+        Route::delete('/', [NotificationController::class, 'destroyAll']);
+    });
+
+    
+    
+    // Notification routes
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::get('/{id}', [NotificationController::class, 'show']);
+        Route::patch('/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
+        Route::patch('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+        Route::delete('/{id}', [NotificationController::class, 'destroy']);
+        Route::delete('/', [NotificationController::class, 'destroyAll']);
+    });
+    
+
+    Route::prefix('admin')->middleware('role:admin')->group(function () {
+        Route::resource('faqs', FaqController::class);
+        Route::resource('pages', PagesController::class);
+    });
 });
 
 
@@ -57,45 +105,6 @@ Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/profile', [UserProfileController::class, 'index']);
-    Route::put('/profile', [UserProfileController::class, 'update']);
-    Route::get('/profile', [UserProfileController::class, 'index']);
-    Route::put('/profile', [UserProfileController::class, 'update']);
-
-    // Auth protected routes
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/me', [AuthController::class, 'me']);
-    Route::post('/profile', [AuthController::class, 'updateProfile']);
-
-    Route::resource('cards', CardController::class);
-    
-    // Notification routes
-    Route::prefix('notifications')->group(function () {
-        Route::get('/', [NotificationController::class, 'index']);
-        Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
-        Route::get('/{id}', [NotificationController::class, 'show']);
-        Route::patch('/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
-        Route::patch('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
-        Route::delete('/{id}', [NotificationController::class, 'destroy']);
-        Route::delete('/', [NotificationController::class, 'destroyAll']);
-    });
-    
-    
-    // Notification routes
-    Route::prefix('notifications')->group(function () {
-        Route::get('/', [NotificationController::class, 'index']);
-        Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
-        Route::get('/{id}', [NotificationController::class, 'show']);
-        Route::patch('/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
-        Route::patch('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
-        Route::delete('/{id}', [NotificationController::class, 'destroy']);
-        Route::delete('/', [NotificationController::class, 'destroyAll']);
-    });
-    
-    Route::prefix('admin')->middleware('role:admin')->group(function () {
-        Route::resource('faqs', FaqController::class);
-        Route::resource('pages', PagesController::class);
-    });
 });
 
 Route::get('/webhook-handler', function () {
@@ -112,6 +121,7 @@ Route::get('/webhook-handler', function () {
 });
 
 
+
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('doctors', [DoctorController::class, 'index']);
     Route::get('doctors/{id}', [DoctorController::class, 'show']);
@@ -121,11 +131,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('searchHistories', [SearchHistoryController::class, 'searchHistory']);
     Route::post('searchHistories', [SearchHistoryController::class, 'storeSearchHistory']);
 });
-
-
-
-
-
 
 Route::get('/webhook-handler', function () {
     $process = new Process(['/bin/bash', '/home/digital07/round5-online-booking-with-doctor-api.digital-vision-solutions.com/deploy.sh']);
@@ -138,3 +143,4 @@ Route::get('/webhook-handler', function () {
 
     return response('Deployment completed successfully.', 200);
 });
+

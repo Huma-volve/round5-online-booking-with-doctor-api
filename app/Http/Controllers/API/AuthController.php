@@ -298,4 +298,27 @@ class AuthController extends Controller {
             ], 500);
         }
     }
+    public function is_notifiable(Request $request) {
+        try {
+            $request->validate([
+                'is_notifiable' => 'required|boolean',
+            ]);
+            $user = User::find(Auth::id());
+            $user->is_notifiable = $request->is_notifiable;
+            $user->save();
+            return response()->json([
+                'success' => true,
+                'message' => 'Notification settings updated successfully',
+                'data' => [
+                    $user->is_notifiable,
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating notifications',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
