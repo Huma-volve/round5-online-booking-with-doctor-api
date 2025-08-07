@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+<<<<<<< HEAD
 ];
+=======
+    'stripe' => [
+               'secret' => env('STRIPE_SECRET'),
+                'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+],
+          'secret' => env('STRIPE_SECRET_KEY'),
+          'public' => env('STRIPE_PUBLISHABLE_KEY'),
+    ];
+>>>>>>> 624c06ca54501a957b2c6a7396845ab2d261256e
