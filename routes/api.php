@@ -7,10 +7,11 @@ use Symfony\Component\Process\Process;
 
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\DoctorController;
-
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\Api\CardController;
+use App\Http\Controllers\API\UserProfileController;
+use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\SpecialistController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\API\Pages\PagesController;
@@ -56,6 +57,8 @@ Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/profile', [UserProfileController::class, 'index']);
+    Route::put('/profile', [UserProfileController::class, 'update']);
 
     // Auth protected routes
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -63,7 +66,18 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/profile', [AuthController::class, 'updateProfile']);
 
     Route::resource('cards', CardController::class);
-
+    
+    // Notification routes
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::get('/{id}', [NotificationController::class, 'show']);
+        Route::patch('/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
+        Route::patch('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+        Route::delete('/{id}', [NotificationController::class, 'destroy']);
+        Route::delete('/', [NotificationController::class, 'destroyAll']);
+    });
+    
     Route::prefix('admin')->middleware('role:admin')->group(function () {
         Route::resource('faqs', FaqController::class);
         Route::resource('pages', PagesController::class);
@@ -84,14 +98,15 @@ Route::get('/webhook-handler', function () {
 });
 
 
-Route::get('doctors', [DoctorController::class, 'index']);
-Route::get('doctors/{id}', [DoctorController::class, 'show']);
-Route::get('specialities', [SpecialistController::class, 'index']);
-Route::get('specialities/{id}', [SpecialistController::class, 'show']);
-Route::get('doctors/search', [DoctorController::class, 'search']);
-Route::get('searchHistories', [SearchHistoryController::class, 'searchHistory']);
-Route::post('searchHistories', [SearchHistoryController::class, 'storeSearchHistory']);
-
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('doctors', [DoctorController::class, 'index']);
+    Route::get('doctors/{id}', [DoctorController::class, 'show']);
+    Route::get('specialities', [SpecialistController::class, 'index']);
+    Route::get('specialities/{id}', [SpecialistController::class, 'show']);
+    Route::get('doctors/search', [DoctorController::class, 'search']);
+    Route::get('searchHistories', [SearchHistoryController::class, 'searchHistory']);
+    Route::post('searchHistories', [SearchHistoryController::class, 'storeSearchHistory']);
+});
 
 
 
