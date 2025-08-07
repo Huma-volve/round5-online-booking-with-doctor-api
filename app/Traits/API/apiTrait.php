@@ -4,15 +4,19 @@ namespace App\Traits\API;
 
 trait apiTrait {
     public function successResponse($data = [], $message = 'Success', $code = 200) {
-        return response()->json([
-            'status' => 'success',
+        $response = [
+            'success' => true,
             'message' => $message,
-            'data' => $data
-        ], $code);
+        ];
+        if ($data != []) {
+            $response['data'] = $data;
+        }
+
+        return response()->json($response, $code);
     }
     public function errorResponse($errors = null, $message = 'Error', $code = 400) {
         $response = [
-            'status' => 'Error occurred',
+            'status' => 'Failed',
             'message' => $message,
         ];
         if ($errors) {

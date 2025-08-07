@@ -70,7 +70,7 @@ class CardController extends Controller {
     public function show(string $id) {
         $card = $this->user->cards()->find($id);
         if (!$card) {
-            return $this->errorResponse('Card not found', 'Not Found', 404);
+            return $this->errorResponse(null, 'Not Found', 404);
         }
         return $this->successResponse($card, 'Card retrieved successfully', 200);
     }
@@ -79,15 +79,16 @@ class CardController extends Controller {
     public function update(Request $request, string $id) {
         try {
             $request->validate([
-                'card_token' => 'required|string',
-                'holder_name' => 'required|string',
+                'card_token' => 'sometimes|string',
+                'holder_name' => 'sometimes|string',
             ]);
             $card = $this->user->cards()->find($id);
             if (!$card) {
-                return $this->errorResponse('Card not found', 'Not Found', 404);
+                return $this->errorResponse(null, 'Card not found', 404);
             }
-            $oldPaymentMethod = PaymentMethod::retrieve($card->stripe_pm_id);
-            $oldPaymentMethod->detach();
+            $paymentMethod = PaymentMethod::retrieve($card->stripe_pm_id);
+            $paymentMethod->detach();
+
             $newPaymentMethod = PaymentMethod::create([
                 'type' => 'card',
                 'card' => [
@@ -95,30 +96,17 @@ class CardController extends Controller {
                 ],
             ]);
             $newPaymentMethod->attach(['customer' => $this->user->stripe_id]);
-            $card->card_holder_name = $request->holder_name;
-            $card->stripe_pm_id = $newPaymentMethod->id;
-            $card->brand = $newPaymentMethod->card->brand;
-            $card->last_four = $newPaymentMethod->card->last4;
-            $card->exp_month = $newPaymentMethod->card->exp_month;
-            $card->exp_year = $newPaymentMethod->card->exp_year;
-            $card->save();
+            $card->update([
+                'card_holder_name' => $request->holder_name,
+                'stripe_pm_id' => $newPaymentMethod->id,
+                'brand' => $newPaymentMethod->card->brand,
+                'last_four' => $newPaymentMethod->card->last4,
+                'exp_month' => $newPaymentMethod->card->exp_month,
+                'exp_year' => $newPaymentMethod->card->exp_year,
+            ]);
             return $this->successResponse($card, 'Card updated successfully', 200);
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), 'Failed to update card', 500);
-        }
-    }
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id) {
-        try {
-            $card = $this->user->cards()->find($id);
-            $paymentMethod = PaymentMethod::retrieve($card->stripe_pm_id);
-            $paymentMethod->detach();
-            $card->delete();
-            return $this->successResponse([], 'Card deleted successfully', 200);
-        } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), 'Failed to delete card', 500);
         }
     }
 }
