@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder {
      * Seed the application's database.
      */
     public function run(): void {
-        $this->call(RolesSeeder::class);
+        $this->call(RolesAndPermissionsSeeder::class);
         $this->call(HospitalSeeder::class);
         $this->call(SpecialistSeeder::class);
         $this->call(DoctorProfileSeeder::class);
