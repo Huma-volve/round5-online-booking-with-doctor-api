@@ -14,6 +14,8 @@ use App\Http\Controllers\Api\CardController;
 use App\Http\Controllers\SpecialistController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\API\Pages\PagesController;
+use App\Http\Controllers\SearchHistoryController;
+use Laravel\Sanctum\Sanctum;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 Route::get('/user', function (Request $request) {
@@ -82,11 +84,18 @@ Route::get('/webhook-handler', function () {
 });
 
 
-Route::get('doctors', [DoctorController::class, 'index'])->middleware('auth:sanctum');
-Route::get('doctors/{id}', [DoctorController::class, 'show'])->middleware('auth:sanctum');
-Route::get('specialities', [SpecialistController::class, 'index'])->middleware('auth:sanctum');
-Route::get('specialities/{id}', [SpecialistController::class, 'show'])->middleware('auth:sanctum');
+Route::get('doctors', [DoctorController::class, 'index']);
+Route::get('doctors/{id}', [DoctorController::class, 'show']);
+Route::get('specialities', [SpecialistController::class, 'index']);
+Route::get('specialities/{id}', [SpecialistController::class, 'show']);
 Route::get('doctors/search', [DoctorController::class, 'search']);
+Route::get('searchHistories', [SearchHistoryController::class, 'searchHistory']);
+Route::post('searchHistories', [SearchHistoryController::class, 'storeSearchHistory']);
+
+
+
+
+
 
 
 Route::get('/webhook-handler', function () {
