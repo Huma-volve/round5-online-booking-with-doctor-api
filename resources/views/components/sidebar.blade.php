@@ -2,7 +2,7 @@
 <nav class="sidebar sidebar-offcanvas bg-dark text-white" id="sidebar">
   <ul class="nav">
     <li class="nav-item">
-      <a class="nav-link text-white" href="#">
+      <a class="nav-link text-white" href="/doctors">
         <i class="mdi mdi-account-multiple menu-icon text-white"></i>
         <span class="menu-title">Doctors</span>
       </a>

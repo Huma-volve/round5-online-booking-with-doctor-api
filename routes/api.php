@@ -10,11 +10,13 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\Api\CardController;
-use App\Http\Controllers\API\Pages\PagesController;
 use App\Http\Controllers\API\UserProfileController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\SpecialistController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\API\Pages\PagesController;
+use App\Http\Controllers\SearchHistoryController;
+use Laravel\Sanctum\Sanctum;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 Route::get('/user', function (Request $request) {
@@ -40,6 +42,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook']);
 
 
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/profile', [UserProfileController::class, 'index']);
+    Route::put('/profile', [UserProfileController::class, 'update']);
+    Route::get('/profile', [UserProfileController::class, 'index']);
+    Route::put('/profile', [UserProfileController::class, 'update']);
+
+
     // Auth protected routes
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
@@ -59,6 +68,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [NotificationController::class, 'destroy']);
         Route::delete('/', [NotificationController::class, 'destroyAll']);
     });
+
+    
+    
+    // Notification routes
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::get('/{id}', [NotificationController::class, 'show']);
+        Route::patch('/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
+        Route::patch('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+        Route::delete('/{id}', [NotificationController::class, 'destroy']);
+        Route::delete('/', [NotificationController::class, 'destroyAll']);
+    });
+    
 
     Route::prefix('admin')->middleware('role:admin')->group(function () {
         Route::resource('faqs', FaqController::class);
@@ -96,3 +119,28 @@ Route::get('/webhook-handler', function () {
 
     return response('Deployment completed successfully.', 200);
 });
+
+
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('doctors', [DoctorController::class, 'index']);
+    Route::get('doctors/{id}', [DoctorController::class, 'show']);
+    Route::get('specialities', [SpecialistController::class, 'index']);
+    Route::get('specialities/{id}', [SpecialistController::class, 'show']);
+    Route::get('doctors/search', [DoctorController::class, 'search']);
+    Route::get('searchHistories', [SearchHistoryController::class, 'searchHistory']);
+    Route::post('searchHistories', [SearchHistoryController::class, 'storeSearchHistory']);
+});
+
+Route::get('/webhook-handler', function () {
+    $process = new Process(['/bin/bash', '/home/digital07/round5-online-booking-with-doctor-api.digital-vision-solutions.com/deploy.sh']);
+
+    try {
+        $process->mustRun();
+    } catch (ProcessFailedException $exception) {
+        return response('Deployment failed: ' . $exception->getMessage(), 500);
+    }
+
+    return response('Deployment completed successfully.', 200);
+});
+

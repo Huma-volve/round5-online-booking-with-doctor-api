@@ -17,7 +17,7 @@ use App\Traits\API\apiTrait;
 
 class DoctorController extends Controller
 {
-        use apiTrait;
+    use apiTrait;
 
     public function index(){
         $doctors=DoctorProfile::all();
@@ -33,6 +33,18 @@ class DoctorController extends Controller
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+    
     public function search(Request $request) {
      $request->validate([
         'name' => 'nullable|string',

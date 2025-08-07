@@ -23,7 +23,7 @@ class DoctorProfileSeeder extends Seeder
         //user_id	specialties_id	hospital_id	about	experience_years	price_per_hour
         $doctorProfile= new DoctorProfile();
         $doctorProfile->user_id= $user->id;
-        $doctorProfile->specialties_id=1;
+        $doctorProfile->specialist_id=1;
         $doctorProfile->hospital_id=1;
         $doctorProfile->about="magster in eyes surgery aand 20 year experience";
         $doctorProfile->experience_years=20;
