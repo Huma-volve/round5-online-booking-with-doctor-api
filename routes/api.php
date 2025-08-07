@@ -59,6 +59,8 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/profile', [UserProfileController::class, 'index']);
     Route::put('/profile', [UserProfileController::class, 'update']);
+    Route::get('/profile', [UserProfileController::class, 'index']);
+    Route::put('/profile', [UserProfileController::class, 'update']);
 
     // Auth protected routes
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -66,6 +68,18 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/profile', [AuthController::class, 'updateProfile']);
 
     Route::resource('cards', CardController::class);
+    
+    // Notification routes
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::get('/{id}', [NotificationController::class, 'show']);
+        Route::patch('/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
+        Route::patch('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+        Route::delete('/{id}', [NotificationController::class, 'destroy']);
+        Route::delete('/', [NotificationController::class, 'destroyAll']);
+    });
+    
     
     // Notification routes
     Route::prefix('notifications')->group(function () {
