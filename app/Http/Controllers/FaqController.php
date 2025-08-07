@@ -16,7 +16,7 @@ class FaqController extends Controller {
     public function show($id) {
         $faq = Faq::find($id);
         if (!$faq) {
-            return $this->errorResponse('FAQ not found', 404);
+            return $this->errorResponse(null, 'FAQ not found', 404);
         }
         return $this->successResponse($faq, 'FAQ retrieved successfully', 200);
     }
@@ -33,7 +33,7 @@ class FaqController extends Controller {
     public function update($id, Request $request) {
         $faq = Faq::find($id);
         if (!$faq) {
-            return $this->errorResponse('FAQ not found', 404);
+            return $this->errorResponse(null, 'FAQ not found', 404);
         }
         $data = $request->validate([
             'question' => 'sometimes|string|max:255',
@@ -47,7 +47,7 @@ class FaqController extends Controller {
     public function destroy($id) {
         $faq = Faq::find($id);
         if (!$faq) {
-            return $this->errorResponse('FAQ not found', 404);
+            return $this->errorResponse(null, 'FAQ not found', 404);
         }
         $faq->delete();
         return $this->successResponse([], 'FAQ deleted successfully', 204);

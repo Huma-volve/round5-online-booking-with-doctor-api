@@ -44,8 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/profile', [AuthController::class, 'updateProfile']);
-    // Route::get('/profile', [UserProfileController::class, 'index']);
-    // Route::put('/profile', [UserProfileController::class, 'update']);
+    Route::get('/set_notification', [AuthController::class, 'is_notifiable']);
+    Route::get('/delete_account', [AuthController::class, 'deleteAccount']);
     //Card Routes
     Route::resource('cards', CardController::class);
 
@@ -81,8 +81,6 @@ Route::post('/send-reset-otp', [AuthController::class, 'sendResetOtp']);
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
-Route::middleware(['auth:sanctum'])->group(function () {
-});
 
 Route::get('/webhook-handler', function () {
     // Run the deploy script
