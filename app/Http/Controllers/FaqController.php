@@ -24,8 +24,8 @@ class FaqController extends Controller {
         $data = $request->validate([
             'question' => 'required|string|max:255',
             'answer' => 'required|string',
-            'order' => 'required|integer',
-            'status' => 'required|in:active,inactive',
+            'order' => 'sometimes|integer',
+            'status' => 'sometimes|in:active,inactive',
         ]);
         $faq = Faq::create($data);
         return $this->successResponse($faq, 'FAQ created successfully', 201);
