@@ -21,6 +21,8 @@
         <tbody class="text-center">
           @forelse($doctors as $doctor)
         <tr>
+          <td>  <img src="{{ asset('storage/' . $doctor->profile_image) }}" alt="Doctor Image" width="50" height="50" />
+         </td>
           <td>{{ $doctor->name }}</td>
           <td>{{ $doctor->email }}</td>
           <td>{{ $doctor->phone }}</td>

@@ -46,9 +46,20 @@ class DoctorController extends Controller
             'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
+         // Prepare doctor data without image path initially
+    $doctorData = collect($validated)->except('profile_image')->toArray();
+
+    // If image uploaded, store it and add path to data
+    if ($request->hasFile('profile_image')) {
+        $path = $request->file('profile_image')->store('profile_images', 'public');
+        $doctorData['profile_image'] = $path;  // e.g. "profile_images/filename.jpg"
+    }
+
+    Doctor::create($doctorData);
+
         //$validated['available_slots'] = json_encode($validated['available_slots']);
 
-        Doctor::create($validated);
+        
 
          return redirect()->route('doctors.index');
 
