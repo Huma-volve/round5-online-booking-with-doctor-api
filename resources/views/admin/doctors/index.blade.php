@@ -9,6 +9,7 @@
       <table class="table table-bordered table-hover align-middle shadow-sm">
         <thead class="table-primary text-center">
           <tr>
+            <th scope="col">Image</th>
             <th scope="col">👤 Name</th>
             <th scope="col">📧 Email</th>
             <th scope="col">📞 Phone</th>
@@ -21,8 +22,19 @@
         <tbody class="text-center">
           @forelse($doctors as $doctor)
         <tr>
-          <td>  <img src="{{ asset('storage/' . $doctor->profile_image) }}" alt="Doctor Image" width="50" height="50" />
-         </td>
+
+        @php
+        $media = $doctor->getFirstMedia('profile_images');
+      @endphp
+
+        <td>
+          @if($media)
+        <img src="{{ asset('storage/' . $media->id . '/' . $media->file_name) }}" alt="Doctor Image"
+        style="display:block; width:50px; height:50px;" />
+        @else
+        <span>No Image</span>
+        @endif
+        </td>
           <td>{{ $doctor->name }}</td>
           <td>{{ $doctor->email }}</td>
           <td>{{ $doctor->phone }}</td>
@@ -36,9 +48,9 @@
         @foreach($doctor->available_slots as $slot)
         <li>{{ $slot }}</li>
         @endforeach
-      @else
+        @else
         <span class="text-muted">N/A</span>
-      @endif
+        @endif
           </td>
           <td>
           <span class="badge rounded-pill {{ $doctor->status ? 'bg-success' : 'bg-secondary' }}">

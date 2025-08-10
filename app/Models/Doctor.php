@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Doctor extends Model
+class Doctor extends Model implements HasMedia
 {
+use InteractsWithMedia;
    protected $fillable = [
       'name',
       'email',
@@ -14,7 +17,7 @@ class Doctor extends Model
       'bio',
       'available_slots',
       'status',
-      'profile_image'
+     
    ];
 
 
