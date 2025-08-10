@@ -64,19 +64,6 @@ Route::middleware('auth:sanctum')->group(function () {
         });
 
 
-
-        // Notification routes
-        Route::prefix('notifications')->group(function () {
-            Route::get('/', [NotificationController::class, 'index']);
-            Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
-            Route::get('/{id}', [NotificationController::class, 'show']);
-            Route::patch('/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
-            Route::patch('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
-            Route::delete('/{id}', [NotificationController::class, 'destroy']);
-            Route::delete('/', [NotificationController::class, 'destroyAll']);
-        });
-
-
         Route::prefix('admin')->middleware('role:admin')->group(function () {
             Route::resource('faqs', FaqController::class);
             Route::resource('pages', PagesController::class);
@@ -89,14 +76,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('faqs', [FaqController::class, 'index']);
     Route::get('faqs/{id}', [FaqController::class, 'show']);
 
-    // Auth routes
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
-
-    // Password reset routes
-    Route::post('/send-reset-otp', [AuthController::class, 'sendResetOtp']);
-    Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
-    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 
     Route::get('/webhook-handler', function () {
@@ -136,3 +115,13 @@ Route::middleware('auth:sanctum')->group(function () {
         return response('Deployment completed successfully.', 200);
     });
 });
+
+
+// Auth routes
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+// Password reset routes
+Route::post('/send-reset-otp', [AuthController::class, 'sendResetOtp']);
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
