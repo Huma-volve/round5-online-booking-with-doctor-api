@@ -11,7 +11,7 @@
         <form method="POST" action="{{ route('doctors.store') }}" enctype="multipart/form-data">
           @csrf
           <div class="mb-3">
-            <input type="file" name="image" accept="image/*" required>
+            <input type="file" name="profile_image" accept="image/*" required>
           </div>
           <div class="mb-3">
             <label for="name" class="form-label fw-semibold text-dark">Name</label>
