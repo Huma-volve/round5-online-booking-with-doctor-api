@@ -19,13 +19,68 @@ class DoctorController extends Controller
 {
     use apiTrait;
 
-    public function index(){
-        $doctors=DoctorProfile::all();
-        return $this->successResponse($data = $doctors, $message = 'Success',200);
-    }
+public function index()
+{
+    $doctors = DoctorProfile::join('users', 'doctor_profiles.user_id', '=', 'users.id')
+        ->join('hospitals', 'doctor_profiles.hospital_id', '=', 'hospitals.id')
+        ->join('specialists', 'doctor_profiles.specialist_id', '=', 'specialists.id')
+        ->leftJoin('doctor_schedules', 'doctor_profiles.id', '=', 'doctor_schedules.doctor_id') 
+        ->select(
+            'doctor_profiles.id as doctor_profile_id',
+            'doctor_profiles.about',
+            'doctor_profiles.experience_years',
+            'doctor_profiles.price_per_hour',
+            'users.id as user_id',
+            'users.name',
+            'users.email',
+            'users.phone',
+            'specialists.id as specialty_id',
+            'specialists.name_en as specialty_name_en',
+            'specialists.name_ar as specialty_name_ar',
+            'specialists.description as specialty_description',
+            'hospitals.id as hospital_id',
+            'hospitals.name as hospital_name',
+            'hospitals.open_at as hospital_start_time',
+            'hospitals.close_at as hospital_end_time',
+            'doctor_schedules.id as availability_id',
+            'doctor_schedules.day',
+            'doctor_schedules.start_time',
+            'doctor_schedules.end_time'
+        )
+        ->get();
+
+    return $this->successResponse($doctors, 'Success', 200);
+}
+
 
     public function show($id) {
-        $doctor = DoctorProfile::find($id);
+        $doctor = DoctorProfile::join('users', 'doctor_profiles.user_id', '=', 'users.id')
+        ->join('hospitals', 'doctor_profiles.hospital_id', '=', 'hospitals.id')
+        ->join('specialists', 'doctor_profiles.specialist_id', '=', 'specialists.id')
+        ->leftJoin('doctor_schedules', 'doctor_profiles.id', '=', 'doctor_schedules.doctor_id') 
+        ->select(
+            'doctor_profiles.id as doctor_profile_id',
+            'doctor_profiles.about',
+            'doctor_profiles.experience_years',
+            'doctor_profiles.price_per_hour',
+            'users.id as user_id',
+            'users.name',
+            'users.email',
+            'users.phone',
+            'specialists.id as specialty_id',
+            'specialists.name_en as specialty_name_en',
+            'specialists.name_ar as specialty_name_ar',
+            'specialists.description as specialty_description',
+            'hospitals.id as hospital_id',
+            'hospitals.name as hospital_name',
+            'hospitals.open_at as hospital_start_time',
+            'hospitals.close_at as hospital_end_time',
+            'doctor_schedules.id as availability_id',
+            'doctor_schedules.day',
+            'doctor_schedules.start_time',
+            'doctor_schedules.end_time'
+        )
+        ->find($id);
         if (!$doctor) {
             return $this->errorResponse('Doctor not found', 404);
         }
