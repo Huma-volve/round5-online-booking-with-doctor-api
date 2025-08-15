@@ -93,15 +93,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 
-    Route::middleware(['auth:sanctum'])->group(function () {
-        Route::get('doctors', [DoctorController::class, 'index']);
-        Route::get('doctors/{id}', [DoctorController::class, 'show']);
-        Route::get('specialities', [SpecialistController::class, 'index']);
-        Route::get('specialities/{id}', [SpecialistController::class, 'show']);
-        Route::get('doctors/search', [DoctorController::class, 'search']);
-        Route::get('searchHistories', [SearchHistoryController::class, 'searchHistory']);
-        Route::post('searchHistories', [SearchHistoryController::class, 'storeSearchHistory']);
-    });
+   
 
     Route::get('/webhook-handler', function () {
         $process = new Process(['/bin/bash', '/home/digital07/round5-online-booking-with-doctor-api.digital-vision-solutions.com/deploy.sh']);
@@ -116,6 +108,16 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
+
+ Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('doctors', [DoctorController::class, 'index']);
+        Route::get('doctors/search', [DoctorController::class, 'search']);
+        Route::get('specialities', [SpecialistController::class, 'index']);
+        Route::get('searchHistories', [SearchHistoryController::class, 'searchHistory']);
+        Route::post('searchHistories', [SearchHistoryController::class, 'storeSearchHistory']);
+        Route::get('doctors/{id}', [DoctorController::class, 'show']);
+        Route::get('specialities/{id}', [SpecialistController::class, 'show']);
+    });
 
 // Auth routes
 Route::post('/register', [AuthController::class, 'register']);
