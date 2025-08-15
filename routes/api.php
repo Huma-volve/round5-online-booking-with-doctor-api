@@ -89,7 +89,17 @@ Route::get('pages/{type}', [PagesController::class, 'show']);
 Route::get('faqs', [FaqController::class, 'index']);
 Route::get('faqs/{id}', [FaqController::class, 'show']);
 
-// ================= Auth routes =================
+ Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('doctors', [DoctorController::class, 'index']);
+        Route::get('doctors/search', [DoctorController::class, 'search']);
+        Route::get('specialities', [SpecialistController::class, 'index']);
+        Route::get('searchHistories', [SearchHistoryController::class, 'searchHistory']);
+        Route::post('searchHistories', [SearchHistoryController::class, 'storeSearchHistory']);
+        Route::get('doctors/{id}', [DoctorController::class, 'show']);
+        Route::get('specialities/{id}', [SpecialistController::class, 'show']);
+    });
+
+// Auth routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 

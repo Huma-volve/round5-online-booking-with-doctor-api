@@ -101,20 +101,13 @@ public function index()
 
     
     public function search(Request $request) {
-     $request->validate([
-        'name' => 'nullable|string',
-        'specialties' => 'nullable|string',
-        'city' => 'nullable|string',
-        'address' => 'nullable|string',
-        'rating' => 'nullable|string',
-    ]);
 
-    $query = Specialty::query()
-        ->join('doctor_profiles', 'specialties.id', '=', 'doctor_profiles.specialties_id')
+        $query = Specialty::query()
+        ->join('doctor_profiles', 'specialists.id', '=', 'doctor_profiles.specialist_id')
         ->join('users', 'doctor_profiles.user_id', '=', 'users.id')
         ->join('locations', function ($join) {
             $join->on('users.id', '=', 'locations.addressable_id')
-                 ->where('locations.addressable_type', '=', 'App\\Models\\User');
+                 ->where('locations.addressable_type', '=', 'user');
         })
         ->select(
             'doctor_profiles.*',
@@ -130,8 +123,8 @@ public function index()
         $query->where('users.name', 'LIKE', '%' . $request->name . '%');
     }
 
-    if ($request->filled('specialties')) {
-        $query->where('specialties.name', $request->specialties);
+    if ($request->filled('specialists')) {
+        $query->where('specialists.name_en', $request->specialists);
     }
 
     if ($request->filled('city')) {
@@ -142,9 +135,6 @@ public function index()
         $query->where('locations.address', 'LIKE', '%' . $request->address . '%');
     }
 
-    if ($request->filled('rating')) {
-        $query->where('doctor_profiles.rating', '>=', $request->rating);
-    }
 
     $doctors = $query->get();
 
