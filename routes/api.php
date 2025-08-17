@@ -24,11 +24,10 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
+    Route::get('/users/{id}/available-slots', [AppointmentController::class, 'availableSlots']);
+    Route::post('/appointments/book', [AppointmentController::class, 'book']);
+    Route::get('/appointments/my', [AppointmentController::class, 'myAppointments']);
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/doctors/{doctor}/available-slots', [AppointmentController::class, 'availableSlots']);
-    Route::post('/appointments', [AppointmentController::class, 'book']);
-    Route::get('/my-bookings', [AppointmentController::class, 'myBookings']);
     Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel']);
     Route::post('/appointments/stripe-session', [StripeController::class, 'createStripeSession']);
     Route::get('/doctors/{doctor}/available-slots', [AppointmentController::class, 'availableSlots']);
@@ -36,7 +35,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/my-bookings', [AppointmentController::class, 'myBookings']);
     Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel']);
     Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook']);
-});
 
 
 //public routes

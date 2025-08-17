@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder {
         $this->call(SpecialistSeeder::class);
         $this->call(DoctorProfileSeeder::class);
         $this->call(LocationSeeder::class);
+        $this->call(AppointmentSeeder::class);
+
 
     }
 }

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->time('appointment_time');
             $table->enum('status', ['pending', 'confirmed', 'canceled'])->default('pending');
             $table->decimal('price', 8, 2)->default(0.00);
-            $table->foreignId('payment_id')->constrained('payments')->cascadeOnDelete();
+            $table->foreignId('payment_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
         });
     }

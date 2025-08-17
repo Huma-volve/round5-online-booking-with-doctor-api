@@ -7,9 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Appointment extends Model
 {
-    protected $fillable = [
-        'user_id', 'doctor_id', 'date', 'time', 'status', 'is_paid', 'payment_reference'
-    ];
+ protected $fillable = [
+    'user_id',
+    'doctor_profile_id',
+    'appointment_date',
+    'appointment_time',
+    'status',
+    'price',
+    'payment_id',
+];
+
 
     public function user()
     {
@@ -19,6 +26,10 @@ class Appointment extends Model
     public function doctor()
     {
         return $this->belongsTo(User::class, 'doctor_id');
+    }
+        public function doctorProfile()
+    {
+        return $this->belongsTo(DoctorProfile::class);
     }
 }
 

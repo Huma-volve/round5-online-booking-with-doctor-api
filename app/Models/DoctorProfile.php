@@ -21,4 +21,11 @@ class DoctorProfile extends Model {
         return $this->belongsTo(Specialty::class);
     }
     
+    // App/Models/DoctorProfile.php
+
+public function doctor()
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
+
 }
