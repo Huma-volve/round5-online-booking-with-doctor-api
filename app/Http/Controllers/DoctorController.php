@@ -24,7 +24,7 @@ public function index()
     $doctors = DoctorProfile::join('users', 'doctor_profiles.user_id', '=', 'users.id')
         ->join('hospitals', 'doctor_profiles.hospital_id', '=', 'hospitals.id')
         ->join('specialists', 'doctor_profiles.specialist_id', '=', 'specialists.id')
-        ->leftJoin('doctor_schedules', 'doctor_profiles.id', '=', 'doctor_schedules.doctor_id') 
+        ->leftJoin('doctor_schedules', 'doctor_profiles.id', '=', 'doctor_schedules.doctor_id')
         ->select(
             'doctor_profiles.id as doctor_profile_id',
             'doctor_profiles.about',
@@ -57,7 +57,7 @@ public function index()
         $doctor = DoctorProfile::join('users', 'doctor_profiles.user_id', '=', 'users.id')
         ->join('hospitals', 'doctor_profiles.hospital_id', '=', 'hospitals.id')
         ->join('specialists', 'doctor_profiles.specialist_id', '=', 'specialists.id')
-        ->leftJoin('doctor_schedules', 'doctor_profiles.id', '=', 'doctor_schedules.doctor_id') 
+        ->leftJoin('doctor_schedules', 'doctor_profiles.id', '=', 'doctor_schedules.doctor_id')
         ->select(
             'doctor_profiles.id as doctor_profile_id',
             'doctor_profiles.about',
@@ -88,18 +88,6 @@ public function index()
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-    
     public function search(Request $request) {
 
         $query = Specialty::query()
