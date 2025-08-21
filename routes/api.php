@@ -63,14 +63,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('pages', PagesController::class);
     });
 
-    // ================= Public but under auth =================
-    Route::get('doctors', [DoctorController::class, 'index']);
-    Route::get('doctors/{id}', [DoctorController::class, 'show']);
-    Route::get('specialities', [SpecialistController::class, 'index']);
-    Route::get('specialities/{id}', [SpecialistController::class, 'show']);
-    Route::get('doctors/search', [DoctorController::class, 'search']);
-    Route::get('searchHistories', [SearchHistoryController::class, 'searchHistory']);
-    Route::post('searchHistories', [SearchHistoryController::class, 'storeSearchHistory']);
 
     // ================= Deployment Webhook =================
     Route::get('/webhook-handler', function () {
