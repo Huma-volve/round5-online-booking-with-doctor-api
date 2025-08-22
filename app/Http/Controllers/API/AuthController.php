@@ -25,15 +25,14 @@ class AuthController extends Controller {
     use apiTrait;
 
     public function register(RegisterRequest $request) {
-
         try {
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'phone' => $request->phone,
+                'type' => $request->type ?? 'customer',
             ]);
-
             $token = $user->createToken('auth_token')->plainTextToken;
             $data = [
                 'user' => new UserResource($user),
