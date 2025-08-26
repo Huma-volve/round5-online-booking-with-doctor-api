@@ -28,8 +28,7 @@ class User extends Authenticatable {
         'name',
         'email',
         'password',
-
-
+        'type',
         'phone',
         'birthdate',
         'avatar',
@@ -80,9 +79,11 @@ class User extends Authenticatable {
     }
 
 
+
     public function bookings()
     {
         return $this->hasMany(Booking::class);
     }
+
 
 }
