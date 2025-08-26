@@ -14,14 +14,14 @@
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link text-white" href="#">
+      <a class="nav-link text-white" href="/bookings">
         <i class="mdi mdi-calendar-clock menu-icon text-white"></i>
         <span class="menu-title">Bookings</span>
       </a>
     </li>
 
     <li class="nav-item">
-      <a href = "/users" class="nav-link text-white" href="#">
+      <a href = "/users" class="nav-link text-white" >
         <i class="mdi mdi-account-multiple menu-icon text-white"></i>
         <span class="menu-title">Users</span>
       </a>

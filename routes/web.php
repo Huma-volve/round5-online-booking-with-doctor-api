@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\SpecialistController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DoctorController;
@@ -28,6 +29,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('users',UserController::class);
     Route::resource("doctors", DoctorController::class);
     Route::resource('specialists', SpecialistController::class);
+    Route::resource('bookings',BookingController::class);
+
+
+    
 });
 
 
