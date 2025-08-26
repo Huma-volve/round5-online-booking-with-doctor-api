@@ -4,6 +4,13 @@
       <h2 class="text-primary fw-bold">Doctor Management</h2>
       <a href="{{ route('doctors.create') }}" class="btn btn-outline-primary">+ Add New Doctor</a>
     </div>
+    <div class="mb-3">
+      <form method="GET" action="{{ route('doctors.index') }}" class="d-flex">
+        <input type="text" name="search" class="form-control me-2" placeholder="Search by name, email, or phone"
+          value="{{ request('search') }}">
+        <button class="btn btn-primary" type="submit">Search</button>
+      </form>
+    </div>
 
     <div class="table-responsive">
       <table class="table table-bordered table-hover align-middle shadow-sm">
@@ -24,7 +31,7 @@
         <tr>
 
         @php
-        $media = $doctor->getFirstMedia('profile_images');
+  $media = $doctor->getFirstMedia('profile_images');
       @endphp
 
         <td>
@@ -69,6 +76,10 @@
           @endforelse
         </tbody>
       </table>
+       <!-- 📌 Pagination -->
+      <div class="mt-3">
+        {{ $doctors->appends(request()->input())->links() }}
+      </div>
     </div>
   </div>
 </x-layout>

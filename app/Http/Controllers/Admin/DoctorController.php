@@ -12,9 +12,20 @@ class DoctorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $doctors = Doctor::with('specialist')->get();
+        $query = Doctor::with('specialist');
+        if ($request->has('search') && !empty($request->search)) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+              ->orWhere('email', 'like', "%{$search}%")
+              ->orWhere('phone', 'like', "%{$search}%");
+        });
+    }
+
+    // Use pagination instead of get()
+    $doctors = $query->paginate(10); 
         return view('admin.doctors.index', compact('doctors'));
     }
 
