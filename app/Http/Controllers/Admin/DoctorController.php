@@ -12,9 +12,20 @@ class DoctorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $doctors = Doctor::with('specialist')->get();
+        $query = Doctor::with('specialist');
+        if ($request->has('search') && !empty($request->search)) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+              ->orWhere('email', 'like', "%{$search}%")
+              ->orWhere('phone', 'like', "%{$search}%");
+        });
+    }
+
+    // Use pagination instead of get()
+    $doctors = $query->paginate(10); 
         return view('admin.doctors.index', compact('doctors'));
     }
 
@@ -46,9 +57,14 @@ class DoctorController extends Controller
             'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        //$validated['available_slots'] = json_encode($validated['available_slots']);
+         // Prepare doctor data without image path initially
+        $doctor = Doctor::create(collect($validated)->except('profile_image')->toArray());
 
-        Doctor::create($validated);
+    // If image uploaded, store it and add path to data
+        if ($request->hasFile('profile_image')) {
+            $doctor->addMediaFromRequest('profile_image')
+            ->toMediaCollection('profile_images'); 
+        }
 
          return redirect()->route('doctors.index');
 

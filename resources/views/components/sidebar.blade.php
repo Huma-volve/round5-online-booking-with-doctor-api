@@ -8,7 +8,7 @@
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link text-white" href="#">
+      <a class="nav-link text-white" href="/specialists">
         <i class="mdi mdi-stethoscope menu-icon text-white"></i>
         <span class="menu-title">Specialists</span>
       </a>
