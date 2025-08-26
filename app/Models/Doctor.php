@@ -40,4 +40,9 @@ use InteractsWithMedia , Searchable;
      {
         return $this->belongsTo(Specialist::class);
      }
+
+     public function bookings()
+     {
+          return $this->hasMany(Booking::class);
+     }
 }

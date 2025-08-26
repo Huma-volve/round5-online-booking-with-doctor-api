@@ -77,4 +77,13 @@ class User extends Authenticatable {
     public function searchHistory() {
         return $this->hasMany(SearchHistory::class);
     }
+
+
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+
 }
