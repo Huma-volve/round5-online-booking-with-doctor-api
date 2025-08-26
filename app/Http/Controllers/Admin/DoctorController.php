@@ -14,20 +14,22 @@ class DoctorController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Doctor::with('specialist');
-        if ($request->has('search') && !empty($request->search)) {
-        $search = $request->search;
-        $query->where(function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%")
-              ->orWhere('email', 'like', "%{$search}%")
-              ->orWhere('phone', 'like', "%{$search}%");
-        });
+        
+       if($request->filled('search')) {
+        // Search with Laravel Scout
+        $doctors = Doctor::search($request->search)->paginate(10);
+
+    
+    } else {
+        // Default: normal query with relations
+        $doctors = Doctor::with('specialist')->paginate(10);
     }
 
-    // Use pagination instead of get()
-    $doctors = $query->paginate(10); 
-        return view('admin.doctors.index', compact('doctors'));
+    return view('admin.doctors.index', compact('doctors'));
     }
+
+    
+    
 
     /**
      * Show the form for creating a new resource.
