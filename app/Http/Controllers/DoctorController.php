@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\DoctorProfile;
 use App\Models\Specialty;
 use App\Traits\API\apiTrait;
@@ -100,45 +101,69 @@ public function index()
 
 
     
-    public function search(Request $request) {
+  public function search(Request $request) {
 
-        $query = Specialty::query()
-        ->join('doctor_profiles', 'specialists.id', '=', 'doctor_profiles.specialist_id')
-        ->join('users', 'doctor_profiles.user_id', '=', 'users.id')
-        ->join('locations', function ($join) {
-            $join->on('users.id', '=', 'locations.addressable_id')
-                 ->where('locations.addressable_type', '=', 'user');
+    $request->validate([
+        'name' => 'nullable|string',
+        'specialty' => 'nullable|string',
+        'city' => 'nullable|string',
+        'address' => 'nullable|string',
+    ]);
+
+    $query = DB::table('specialists as s')
+        ->join('doctor_profiles as dp', 's.id', '=', 'dp.specialist_id')
+        ->join('users as u', 'dp.user_id', '=', 'u.id')
+        ->join('hospitals as h', 'dp.hospital_id', '=', 'h.id')
+        ->leftJoin('doctor_schedules as ds', 'dp.id', '=', 'ds.doctor_id')
+        ->join('locations as l', function ($join) {
+            $join->on('u.id', '=', 'l.addressable_id')
+                 ->where('l.addressable_type', '=', 'user');
         })
         ->select(
-            'doctor_profiles.*',
-            'users.name',
-            'users.phone',
-            'users.avatar',
-            'users.email',
-            'locations.city',
-            'locations.address'
+            'dp.id as doctor_profile_id',
+            'dp.about',
+            'dp.experience_years',
+            'dp.price_per_hour',
+            'u.id as user_id',
+            'u.name',
+            'u.email',
+            'u.phone',
+            'u.avatar',
+            'l.city',
+            'l.address',
+            's.id as specialty_id',
+            's.name_en as specialty_name_en',
+            's.name_ar as specialty_name_ar',
+            's.description as specialty_description',
+            'h.id as hospital_id',
+            'h.name as hospital_name',
+            'h.open_at as hospital_start_time',
+            'h.close_at as hospital_end_time',
+            'ds.id as availability_id',
+            'ds.day',
+            'ds.start_time',
+            'ds.end_time'
         );
 
     if ($request->filled('name')) {
-        $query->where('users.name', 'LIKE', '%' . $request->name . '%');
+        $query->where('u.name', 'LIKE', '%' . $request->name . '%');
     }
 
-    if ($request->filled('specialists')) {
-        $query->where('specialists.name_en', $request->specialists);
+    if ($request->filled('specialties')) {
+        $query->where('s.name_en', 'LIKE', '%' . $request->specialties . '%');
     }
 
     if ($request->filled('city')) {
-        $query->where('locations.city', 'LIKE', '%' . $request->city . '%');
+        $query->where('l.city', 'LIKE', '%' . $request->city . '%');
     }
 
     if ($request->filled('address')) {
-        $query->where('locations.address', 'LIKE', '%' . $request->address . '%');
+        $query->where('l.address', 'LIKE', '%' . $request->address . '%');
     }
-
 
     $doctors = $query->get();
 
-        return $this->successResponse($doctors, 'Doctor retrieved successfully', 200);
-    }
+    return $this->successResponse($doctors, 'Doctors retrieved successfully', 200);
+}
 
 }
