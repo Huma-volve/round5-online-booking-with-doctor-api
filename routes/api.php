@@ -4,7 +4,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\StripeController;
@@ -41,7 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/profile', [AuthController::class, 'updateProfile']);
     Route::get('/set_notification', [AuthController::class, 'is_notifiable']);
-    Route::get('/delete_account', [AuthController::class, 'deleteAccount']);
+    Route::post('/delete_account', [AuthController::class, 'deleteAccount']);
 
     // Card Routes
     Route::resource('cards', CardController::class);
@@ -81,15 +80,17 @@ Route::get('pages/{type}', [PagesController::class, 'show']);
 Route::get('faqs', [FaqController::class, 'index']);
 Route::get('faqs/{id}', [FaqController::class, 'show']);
 
- Route::middleware(['auth:sanctum'])->group(function () {
-        Route::get('doctors', [DoctorController::class, 'index']);
-        Route::get('doctors/search', [DoctorController::class, 'search']);
-        Route::get('specialities', [SpecialistController::class, 'index']);
-        Route::get('searchHistories', [SearchHistoryController::class, 'searchHistory']);
-        Route::post('searchHistories', [SearchHistoryController::class, 'storeSearchHistory']);
-        Route::get('doctors/{id}', [DoctorController::class, 'show']);
-        Route::get('specialities/{id}', [SpecialistController::class, 'show']);
-    });
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('doctors', [DoctorController::class, 'index']);
+    Route::get('doctors/search', [DoctorController::class, 'search']);
+    Route::get('doctors/{id}', [DoctorController::class, 'show']);
+
+    Route::get('specialities', [SpecialistController::class, 'index']);
+    Route::get('searchHistories', [SearchHistoryController::class, 'searchHistory']);
+    Route::post('searchHistories', [SearchHistoryController::class, 'storeSearchHistory']);
+    Route::get('specialities/{id}', [SpecialistController::class, 'show']);
+});
+
 
 // Auth routes
 Route::post('/register', [AuthController::class, 'register']);
