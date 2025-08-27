@@ -91,6 +91,13 @@ class UserSeeder extends Seeder
     'phone' => '0507788990',
     'email_verified_at' => now(),
 ]);
+\App\Models\User::create([
+    'name' => 'abanoub bekhiet',
+    'email' => 'abanoub@example.com',
+    'password' => bcrypt('password'),
+    'phone' => '0507784490',
+    'email_verified_at' => now(),
+]);
 
 
         $this->command->info('Users seeded successfully!');
