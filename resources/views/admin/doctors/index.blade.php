@@ -4,11 +4,19 @@
       <h2 class="text-primary fw-bold">Doctor Management</h2>
       <a href="{{ route('doctors.create') }}" class="btn btn-outline-primary">+ Add New Doctor</a>
     </div>
+    <div class="mb-3">
+      <form method="GET" action="{{ route('doctors.index') }}" class="d-flex">
+        <input type="text" name="search" class="form-control me-2" placeholder="Search by name, email, or phone"
+          value="{{ request('search') }}">
+        <button class="btn btn-primary" type="submit">Search</button>
+      </form>
+    </div>
 
     <div class="table-responsive">
       <table class="table table-bordered table-hover align-middle shadow-sm">
         <thead class="table-primary text-center">
           <tr>
+            <th scope="col">Image</th>
             <th scope="col">👤 Name</th>
             <th scope="col">📧 Email</th>
             <th scope="col">📞 Phone</th>
@@ -21,6 +29,19 @@
         <tbody class="text-center">
           @forelse($doctors as $doctor)
         <tr>
+
+        @php
+  $media = $doctor->getFirstMedia('profile_images');
+      @endphp
+
+        <td>
+          @if($media)
+        <img src="{{ asset('storage/' . $media->id . '/' . $media->file_name) }}" alt="Doctor Image"
+        style="display:block; width:50px; height:50px;" />
+        @else
+        <span>No Image</span>
+        @endif
+        </td>
           <td>{{ $doctor->name }}</td>
           <td>{{ $doctor->email }}</td>
           <td>{{ $doctor->phone }}</td>
@@ -34,9 +55,9 @@
         @foreach($doctor->available_slots as $slot)
         <li>{{ $slot }}</li>
         @endforeach
-      @else
+        @else
         <span class="text-muted">N/A</span>
-      @endif
+        @endif
           </td>
           <td>
           <span class="badge rounded-pill {{ $doctor->status ? 'bg-success' : 'bg-secondary' }}">
@@ -55,6 +76,10 @@
           @endforelse
         </tbody>
       </table>
+       <!-- 📌 Pagination -->
+      <div class="mt-3">
+        {{ $doctors->appends(request()->input())->links() }}
+      </div>
     </div>
   </div>
 </x-layout>

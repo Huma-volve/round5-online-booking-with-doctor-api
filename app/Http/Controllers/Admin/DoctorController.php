@@ -12,11 +12,24 @@ class DoctorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $doctors = Doctor::with('specialist')->get();
-        return view('admin.doctors.index', compact('doctors'));
+        
+       if($request->filled('search')) {
+        // Search with Laravel Scout
+        $doctors = Doctor::search($request->search)->paginate(10);
+
+    
+    } else {
+        // Default: normal query with relations
+        $doctors = Doctor::with('specialist')->paginate(10);
     }
+
+    return view('admin.doctors.index', compact('doctors'));
+    }
+
+    
+    
 
     /**
      * Show the form for creating a new resource.
@@ -46,9 +59,14 @@ class DoctorController extends Controller
             'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        //$validated['available_slots'] = json_encode($validated['available_slots']);
+         // Prepare doctor data without image path initially
+        $doctor = Doctor::create(collect($validated)->except('profile_image')->toArray());
 
-        Doctor::create($validated);
+    // If image uploaded, store it and add path to data
+        if ($request->hasFile('profile_image')) {
+            $doctor->addMediaFromRequest('profile_image')
+            ->toMediaCollection('profile_images'); 
+        }
 
          return redirect()->route('doctors.index');
 

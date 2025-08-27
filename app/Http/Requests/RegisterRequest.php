@@ -4,13 +4,11 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequest extends FormRequest
-{
+class RegisterRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
+    public function authorize(): bool {
         return true;
     }
 
@@ -19,13 +17,13 @@ class RegisterRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
+    public function rules(): array {
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
+            'type' => 'nullable|string|in:admin,doctor,customer'
         ];
     }
 
@@ -34,8 +32,7 @@ class RegisterRequest extends FormRequest
      *
      * @return array
      */
-    public function messages(): array
-    {
+    public function messages(): array {
         return [
             'name.required' => 'Name is required',
             'name.string' => 'Name must be text',
@@ -53,4 +50,4 @@ class RegisterRequest extends FormRequest
             'phone.max' => 'Phone number must not exceed 20 characters',
         ];
     }
-} 
+}

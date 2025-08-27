@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Doctor extends Model
+class Doctor extends Model implements HasMedia
 {
+use InteractsWithMedia , Searchable;
    protected $fillable = [
       'name',
       'email',
@@ -14,7 +18,7 @@ class Doctor extends Model
       'bio',
       'available_slots',
       'status',
-      'profile_image'
+     
    ];
 
 
@@ -23,8 +27,22 @@ class Doctor extends Model
         'status' => 'boolean',
      ];
 
+     public function toSearchableArray()
+     {
+         return [
+               'name' => $this->name,
+               'email' => $this->email,
+               'phone' => $this->phone,
+         ];
+      }
+
      public function specialist()
      {
         return $this->belongsTo(Specialist::class);
+     }
+
+     public function bookings()
+     {
+          return $this->hasMany(Booking::class);
      }
 }
