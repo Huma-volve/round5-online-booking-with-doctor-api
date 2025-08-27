@@ -8,7 +8,7 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\API\CardController;
+use App\Http\Controllers\Api\CardController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\SpecialistController;
 use App\Http\Controllers\AppointmentController;
