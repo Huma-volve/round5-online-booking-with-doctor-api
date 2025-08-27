@@ -150,8 +150,7 @@ public function index()
                     ->orWhere('s.name_en', 'LIKE', "%$queryParam%")
                     ->orWhere('s.name_ar', 'LIKE', "%$queryParam%")
                     ->orWhere('l.city', 'LIKE', "%$queryParam%")
-                    ->orWhere('l.address', 'LIKE', "%$queryParam%")
-                    ->orWhere('dp.about', 'LIKE', "%$queryParam%");
+                    ->orWhere('l.address', 'LIKE', "%$queryParam%");
             });
         }
 
