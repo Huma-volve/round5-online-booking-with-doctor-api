@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // patient
-            $table->foreignId('doctor_id')->constrained()->onDelete('cascade'); // doctor
+            $table->foreignId('doctor_id')->constrained('doctors')->onDelete('cascade'); // doctor from doctors table
             $table->date('date'); // appointment date
             $table->time('time'); // appointment time
             $table->enum('status', ['pending', 'confirmed', 'canceled', 'completed'])->default('pending');

@@ -45,4 +45,9 @@ use InteractsWithMedia , Searchable;
      {
           return $this->hasMany(Booking::class);
      }
+
+     public function appointments()
+     {
+          return $this->hasMany(Appointment::class);
+     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Appointment;
 use App\Models\User;
+use App\Models\Doctor;
 use Carbon\Carbon;
 
 class AppointmentSeeder extends Seeder
@@ -17,10 +18,10 @@ class AppointmentSeeder extends Seeder
     {
         // Get some users and doctors for appointments
         $users = User::where('type', 'customer')->take(5)->get();
-        $doctors = User::where('type', 'doctor')->take(3)->get();
+        $doctors = Doctor::take(3)->get();
 
         if ($users->isEmpty() || $doctors->isEmpty()) {
-            $this->command->warn('No users or doctors found. Please run UserSeeder first.');
+            $this->command->warn('No users or doctors found. Please run UserSeeder and DoctorSeeder first.');
             return;
         }
 
