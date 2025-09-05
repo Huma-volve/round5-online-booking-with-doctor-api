@@ -16,8 +16,8 @@ class AppointmentSeeder extends Seeder
     public function run(): void
     {
         // Get some users and doctors for appointments
-        $users = User::where('role', 'user')->take(5)->get();
-        $doctors = User::where('role', 'doctor')->take(3)->get();
+        $users = User::where('type', 'customer')->take(5)->get();
+        $doctors = User::where('type', 'doctor')->take(3)->get();
 
         if ($users->isEmpty() || $doctors->isEmpty()) {
             $this->command->warn('No users or doctors found. Please run UserSeeder first.');
