@@ -109,4 +109,20 @@ class CardController extends Controller {
             return $this->errorResponse($e->getMessage(), 'Failed to update card', 500);
         }
     }
+
+    public function destroy(string $id) {
+        try {
+            $card = $this->user->cards()->find($id);
+
+            if(!$card) {
+                return $this->errorResponse(null, 'Card not found', 404);
+            }
+
+            $card->delete();
+
+            return $this->successResponse(null, 'Card deleted successfully', 200);
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), 'Failed to delete card', 500);
+        }
+    }
 }

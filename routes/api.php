@@ -43,7 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/delete_account', [AuthController::class, 'deleteAccount']);
 
     // Card Routes
-    Route::resource('cards', CardController::class);
+    Route::apiResource('cards', CardController::class);
 
     // ================= Notification routes =================
     Route::prefix('notifications')->group(function () {
