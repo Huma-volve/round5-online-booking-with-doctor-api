@@ -26,6 +26,7 @@ public function index()
         ->join('hospitals', 'doctor_profiles.hospital_id', '=', 'hospitals.id')
         ->join('specialists', 'doctor_profiles.specialist_id', '=', 'specialists.id')
         ->leftJoin('doctor_schedules', 'doctor_profiles.id', '=', 'doctor_schedules.doctor_id')
+        ->leftJoin('reviews', 'users.id', '=', 'reviews.doctor_id')
         ->select(
             'doctor_profiles.id as doctor_profile_id',
             'doctor_profiles.about',
@@ -44,6 +45,30 @@ public function index()
             'hospitals.open_at as hospital_start_time',
             'hospitals.close_at as hospital_end_time',
             'doctor_schedules.id as availability_id',
+            'doctor_schedules.day',
+            'doctor_schedules.start_time',
+            'doctor_schedules.end_time',
+            DB::raw('COALESCE(AVG(reviews.rating), 0) as average_rating'),
+            DB::raw('COUNT(reviews.id) as reviews_count')
+        )
+        ->groupBy(
+            'doctor_profiles.id',
+            'doctor_profiles.about',
+            'doctor_profiles.experience_years',
+            'doctor_profiles.price_per_hour',
+            'users.id',
+            'users.name',
+            'users.email',
+            'users.phone',
+            'specialists.id',
+            'specialists.name_en',
+            'specialists.name_ar',
+            'specialists.description',
+            'hospitals.id',
+            'hospitals.name',
+            'hospitals.open_at',
+            'hospitals.close_at',
+            'doctor_schedules.id',
             'doctor_schedules.day',
             'doctor_schedules.start_time',
             'doctor_schedules.end_time'
@@ -59,6 +84,7 @@ public function index()
         ->join('hospitals', 'doctor_profiles.hospital_id', '=', 'hospitals.id')
         ->join('specialists', 'doctor_profiles.specialist_id', '=', 'specialists.id')
         ->leftJoin('doctor_schedules', 'doctor_profiles.id', '=', 'doctor_schedules.doctor_id')
+        ->leftJoin('reviews', 'users.id', '=', 'reviews.doctor_id')
         ->select(
             'doctor_profiles.id as doctor_profile_id',
             'doctor_profiles.about',
@@ -79,9 +105,34 @@ public function index()
             'doctor_schedules.id as availability_id',
             'doctor_schedules.day',
             'doctor_schedules.start_time',
+            'doctor_schedules.end_time',
+            DB::raw('COALESCE(AVG(reviews.rating), 0) as average_rating'),
+            DB::raw('COUNT(reviews.id) as reviews_count')
+        )
+        ->where('doctor_profiles.id', $id)
+        ->groupBy(
+            'doctor_profiles.id',
+            'doctor_profiles.about',
+            'doctor_profiles.experience_years',
+            'doctor_profiles.price_per_hour',
+            'users.id',
+            'users.name',
+            'users.email',
+            'users.phone',
+            'specialists.id',
+            'specialists.name_en',
+            'specialists.name_ar',
+            'specialists.description',
+            'hospitals.id',
+            'hospitals.name',
+            'hospitals.open_at',
+            'hospitals.close_at',
+            'doctor_schedules.id',
+            'doctor_schedules.day',
+            'doctor_schedules.start_time',
             'doctor_schedules.end_time'
         )
-        ->find($id);
+        ->first();
         if (!$doctor) {
             return $this->errorResponse('Doctor not found', 404);
         }

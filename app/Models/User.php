@@ -6,6 +6,8 @@ namespace App\Models;
 
 use App\Models\Card;
 use App\Models\DoctorProfile;
+use App\Models\Review;
+use App\Models\Favourite;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -83,6 +85,27 @@ class User extends Authenticatable {
     public function bookings()
     {
         return $this->hasMany(Booking::class);
+    }
+
+
+    public function reviewsGiven()
+    {
+        return $this->hasMany(Review::class, 'user_id');
+    }
+
+    public function reviewsReceived()
+    {
+        return $this->hasMany(Review::class, 'doctor_id');
+    }
+
+    public function favourites()
+    {
+        return $this->hasMany(Favourite::class);
+    }
+
+    public function favouriteDoctors()
+    {
+        return $this->morphMany(Favourite::class, 'favouritable')->where('favouritable_type', self::class);
     }
 
 

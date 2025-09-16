@@ -19,8 +19,16 @@ class CardController extends Controller {
         $this->user = \App\Models\User::find(Auth::id());
         Stripe::setApiKey(config('services.stripe.secret'));
     }
-    public function index() {
-        $cards = $this->user->cards()->get();
+    public function index(Request $request) {
+        $query = $this->user->cards()->newQuery();
+
+        // Support filtering by card brand via ?type= or ?brand=
+        $filterBrand = $request->query('type') ?? $request->query('brand');
+        if (!empty($filterBrand)) {
+            $query->where('brand', $filterBrand);
+        }
+
+        $cards = $query->get();
         return $this->successResponse($cards, 'User cards retrieved successfully', 200);
     }
 

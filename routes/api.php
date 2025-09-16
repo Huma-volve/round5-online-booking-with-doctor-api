@@ -14,6 +14,8 @@ use App\Http\Controllers\SpecialistController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\API\Pages\PagesController;
 use App\Http\Controllers\SearchHistoryController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\FavouriteController;
 
 // اختبار المستخدم الحالي
 Route::get('/user', function (Request $request) {
@@ -84,6 +86,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('doctors', [DoctorController::class, 'index']);
     Route::get('doctors/search', [DoctorController::class, 'search']);
     Route::get('doctors/{id}', [DoctorController::class, 'show']);
+
+    // Favourites (Doctors)
+    Route::get('favourites/doctors', [FavouriteController::class, 'index']);
+    Route::post('favourites/doctors/{doctorId}', [FavouriteController::class, 'store']);
+    Route::delete('favourites/doctors/{doctorId}', [FavouriteController::class, 'destroy']);
+
+    // Reviews
+    Route::get('doctors/{doctorId}/reviews', [ReviewController::class, 'index']);
+    Route::post('doctors/{doctorId}/reviews', [ReviewController::class, 'store']);
 
     Route::get('specialities', [SpecialistController::class, 'index']);
     Route::get('searchHistories', [SearchHistoryController::class, 'searchHistory']);

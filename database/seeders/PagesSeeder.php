@@ -16,93 +16,93 @@ class PagesSeeder extends Seeder {
         Page::create([
             'type' => 'privacy_policy',
             'title' => 'Privacy Policy',
-            'content' => `<<<EOT
-                Privacy Policy
-                Effective Date: {$date}
+            'content' => <<<EOT
+Privacy Policy
+Effective Date: {$date}
 
-                This Privacy Policy describes how Tech-cell ("we", "our", or "us") collects, uses, discloses, and protects the personal information of users ("you" or "your") who use our online doctor booking platform ("Service").
+This Privacy Policy explains how Tech-cell ("we", "our", "us") collects, uses, and protects your information when you use our online doctor booking platform (the "Service").
 
-                1. Information We Collect
-                - Personal Information: name, email, phone number, etc.
-                - Medical Information: appointment notes, medical history, etc.
-                - Technical Data: IP address, browser type, device information.
-                - Payment Info: payment gateway metadata (we do not store card details).
+1) Information We Collect
+- Personal Information: name, email, phone number.
+- Medical Information: appointment notes/medical history (if applicable).
+- Technical Data: IP address, browser, device details.
+- Payments: processed via secure gateways (we don't store card data).
 
-                2. How We Use Your Information
-                We use your data to manage appointments, send notifications, improve our services, process payments, and fulfill legal obligations.
+2) How We Use Information
+We use it to manage appointments, send notifications, improve the Service, process payments, and meet legal obligations.
 
-                3. Sharing Your Information
-                We share information only with healthcare providers, payment processors, or legal authorities when required. We do not sell your information.
+3) Sharing Information
+We only share with healthcare providers, payment processors, or legal authorities when required. We do not sell your data.
 
-                4. Data Security
-                We use encryption, secure logins, and other industry-standard measures to protect your information.
+4) Security
+We apply industry-standard security and encryption practices.
 
-                5. Your Rights
-                You may request access to, correction of, or deletion of your personal information at any time.
+5) Your Rights
+You can request access, correction, or deletion of your personal data.
 
-                6. Cookies
-                We use cookies to improve your experience. You can disable cookies in your browser settings.
+6) Cookies
+We use cookies to enhance your experience. You can disable them in your browser.
 
-                7. Third-Party Links
-                We are not responsible for the privacy practices of any third-party websites linked from our platform.
+7) Third-Party Links
+We are not responsible for the privacy practices of third-party sites.
 
-                8. Children’s Privacy
-                We do not knowingly collect personal information from children under 13 without parental consent.
+8) Children’s Privacy
+We do not knowingly collect data from children under 13 without parental consent.
 
-                9. Changes to This Policy
-                We may update this Privacy Policy periodically. Please review this page for the latest version.
+9) Changes
+We may update this policy from time to time. Please review periodically.
 
-                10. Contact Us
-                If you have questions, please contact us at:
-                Email: tech-cell@example.com
-                Phone: +20 123 456 789
-                Address: Cairo, Egypt
-                EOT;`
+10) Contact Us
+Email: tech-cell@example.com
+Phone: +20 123 456 789
+Address: Cairo, Egypt
+EOT
         ]);
+
         Page::create([
             'type' => 'terms_and_conditions',
             'title' => 'Terms and Conditions',
-            'content' => `<<<EOT
-                Terms and Conditions
-                Effective Date: {$date}
+            'content' => <<<EOT
+Terms and Conditions
+Effective Date: {$date}
 
-                These Terms and Conditions ("Terms") govern your access to and use of Tech-cell’s online doctor booking platform ("Service"). By using the Service, you agree to these Terms.
+By using Tech-cell's online doctor booking platform (the "Service"), you agree to these Terms.
 
-                1. Use of the Service
-                You must be at least 18 years old or have parental/guardian consent to use our platform. You agree to provide accurate, complete, and current information.
+1) Use of Service
+You must be 18+ or have guardian consent. Provide accurate, up-to-date information.
 
-                2. User Accounts
-                You are responsible for maintaining the confidentiality of your account credentials and for any activity under your account.
+2) Accounts
+You are responsible for keeping your credentials secure and for activity under your account.
 
-                3. Appointment Booking
-                Appointments are subject to availability. We do not guarantee medical outcomes and are not responsible for the advice provided by doctors.
+3) Appointments
+Bookings are subject to availability. We do not guarantee medical outcomes and are not responsible for clinical advice.
 
-                4. Payments
-                Fees are displayed before booking. Payments are processed securely via third-party gateways. All payments are non-refundable unless otherwise specified.
+4) Payments
+Processed via secure payment gateways. Refunds apply only if explicitly stated.
 
-                5. Prohibited Conduct
-                You agree not to misuse the Service, engage in harassment, or violate any applicable laws.
+5) Prohibited Conduct
+Do not misuse the Service, harass others, or violate laws.
 
-                6. Intellectual Property
-                All platform content is owned by Tech-cell and is protected by copyright and trademark laws.
+6) Intellectual Property
+All content is owned by Tech-cell and protected by applicable laws.
 
-                7. Termination
-                We may suspend or terminate your access to the Service at our discretion for any violation of these Terms.
+7) Termination
+We may suspend or terminate access if you violate these Terms.
 
-                8. Limitation of Liability
-                We are not liable for indirect, incidental, or consequential damages, including medical outcomes or data breaches.
+8) Limitation of Liability
+We are not liable for indirect or consequential damages.
 
-                9. Modifications to Terms
-                We may update these Terms at any time. Your continued use of the Service indicates acceptance of any changes.
+9) Changes to Terms
+We may update these Terms at any time. Continued use means acceptance.
 
-                10. Governing Law
-                These Terms are governed by the laws of Egypt. Disputes shall be resolved in Egyptian courts.
+10) Governing Law
+These Terms are governed by the laws of Egypt.
 
-                11. Contact
-                Email: tech-cell@example.com
-                Phone: +20 123 456 789
-                Address: Cairo, Egypt
-                EOT;`,
+11) Contact
+Email: tech-cell@example.com
+Phone: +20 123 456 789
+Address: Cairo, Egypt
+EOT,
         ]);
     }
 }
