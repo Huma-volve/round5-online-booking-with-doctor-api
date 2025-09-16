@@ -9,6 +9,8 @@ class Favourite extends Model {
 
     protected $fillable = [
         'user_id',
+        'favouritable_type',
+        'favouritable_id',
     ];
 
     public function user() {
