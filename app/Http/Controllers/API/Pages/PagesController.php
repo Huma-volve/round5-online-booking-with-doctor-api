@@ -16,11 +16,14 @@ class PagesController extends Controller {
     }
 
     public function show(string $type) {
-        $page = Page::where('type', $type)->first();
+        $normalized = str_replace('-', '_', $type);
+        $page = Page::where('type', $type)
+            ->orWhere('type', $normalized)
+            ->first();
         if (!$page) {
             return $this->errorResponse(null, 'Page not found', 404);
         }
-        return $this->successResponse(PagesResourse::collection($page));
+        return $this->successResponse(new PagesResourse($page));
     }
 
     public function store(Request $request) {

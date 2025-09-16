@@ -17,13 +17,14 @@ class FavouriteController extends Controller
         $userId = Auth::id();
 
         $favourites = Favourite::with(['favouritable' => function ($morph) {
-            $morph->select('id', 'name', 'email', 'phone', 'type');
+            $morph->select('id', 'name', 'email', 'phone');
         }])
             ->where('user_id', $userId)
             ->where('favouritable_type', User::class)
             ->get()
             ->filter(function ($fav) {
-                return optional($fav->favouritable)->type === 'doctor';
+                // Check if user has a doctor profile
+                return $fav->favouritable && $fav->favouritable->doctorProfile;
             })
             ->values();
 
@@ -33,7 +34,7 @@ class FavouriteController extends Controller
     public function store($doctorId)
     {
         $user = Auth::user();
-        $doctor = User::where('id', $doctorId)->where('type', 'doctor')->first();
+        $doctor = User::where('id', $doctorId)->whereHas('doctorProfile')->first();
         if (!$doctor) {
             return $this->errorResponse(null, 'Doctor not found', 404);
         }
