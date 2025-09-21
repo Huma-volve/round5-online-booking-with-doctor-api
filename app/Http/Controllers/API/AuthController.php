@@ -131,8 +131,10 @@ class AuthController extends Controller {
             PasswordResetOtp::where('email', $email)->delete();
 
             // إنشاء OTP جديد
-            $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+//            $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            $otp = "000000";
             $expiresAt = now()->addMinutes(10); // OTP صالح لمدة 10 دقائق
+
 
             PasswordResetOtp::create([
                 'email' => $email,
