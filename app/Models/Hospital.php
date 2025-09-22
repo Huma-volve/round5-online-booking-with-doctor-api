@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Hospital extends Model {
     protected $fillable = [
         'name',
+        'city',
         'open_at',
         'close_at',
         'photo',

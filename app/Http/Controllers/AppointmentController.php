@@ -7,9 +7,11 @@ use Carbon\Carbon;
 use App\Models\Appointment;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\API\apiTrait;
 
 class AppointmentController extends Controller
 {
+    use apiTrait;
     
 public function availableSlots($doctorId)
 {
@@ -111,18 +113,29 @@ public function cancel($id)
         return response()->json(['message' => 'Appointment not found.'], 404);
     }
 
-    
+    // Check if the user is authorized to cancel this appointment
     if ($appointment->user_id !== Auth::id()) {
         return response()->json(['message' => 'Unauthorized'], 403);
     }
 
-    
-    if (Carbon::parse($appointment->date)->lt(Carbon::today())) {
+    // Check if appointment is already cancelled
+    if ($appointment->status === 'canceled') {
+        return response()->json(['message' => 'This appointment is already cancelled.'], 400);
+    }
+
+    // Check if appointment is completed
+    if ($appointment->status === 'completed') {
+        return response()->json(['message' => 'Cannot cancel a completed appointment.'], 400);
+    }
+
+    // Check if appointment date is in the past
+    $appointmentDateTime = Carbon::parse($appointment->date . ' ' . $appointment->time);
+    if ($appointmentDateTime->isPast()) {
         return response()->json(['message' => 'Cannot cancel a past appointment.'], 400);
     }
 
-    
-    $appointment->update(['status' => 'cancelled']);
+    // Cancel the appointment
+    $appointment->update(['status' => 'canceled']);
 
     return response()->json(['message' => 'Appointment cancelled successfully.']);
 }
