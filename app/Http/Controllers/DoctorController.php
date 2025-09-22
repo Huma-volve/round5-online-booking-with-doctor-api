@@ -28,7 +28,6 @@ public function index()
         ->leftJoin('doctor_schedules', 'doctor_profiles.id', '=', 'doctor_schedules.doctor_id')
         ->leftJoin('reviews', 'users.id', '=', 'reviews.doctor_id')
         ->select(
-            'doctor_profiles.id as doctor_profile_id',
             'doctor_profiles.about',
             'doctor_profiles.experience_years',
             'doctor_profiles.price_per_hour',
@@ -88,7 +87,6 @@ public function index()
         ->leftJoin('doctor_schedules', 'doctor_profiles.id', '=', 'doctor_schedules.doctor_id')
         ->leftJoin('reviews', 'users.id', '=', 'reviews.doctor_id')
         ->select(
-            'doctor_profiles.id as doctor_profile_id',
             'doctor_profiles.about',
             'doctor_profiles.experience_years',
             'doctor_profiles.price_per_hour',
@@ -155,7 +153,7 @@ public function index()
 
 
 
-    
+
     public function search(Request $request)
     {
         $request->validate([
