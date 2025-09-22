@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\DoctorProfile;
 use App\Models\Specialty;
 use App\Traits\API\apiTrait;
+use App\Models\DoctorSchedule;
 
 //   public function successResponse($data = [], $message = 'Success', $code = 200) {
 //         return response()->json([
@@ -25,9 +26,10 @@ public function index()
     $doctors = DoctorProfile::join('users', 'doctor_profiles.user_id', '=', 'users.id')
         ->join('hospitals', 'doctor_profiles.hospital_id', '=', 'hospitals.id')
         ->join('specialists', 'doctor_profiles.specialist_id', '=', 'specialists.id')
-        ->leftJoin('doctor_schedules', 'doctor_profiles.id', '=', 'doctor_schedules.doctor_id')
+        // ->leftJoin('doctor_schedules', 'doctor_profiles.id', '=', 'doctor_schedules.doctor_id')
         ->leftJoin('reviews', 'users.id', '=', 'reviews.doctor_id')
         ->select(
+            'doctor_profiles.id as doctor_profile_id',
             'doctor_profiles.about',
             'doctor_profiles.experience_years',
             'doctor_profiles.price_per_hour',
@@ -44,10 +46,6 @@ public function index()
             'hospitals.city as hospital_city',
             'hospitals.open_at as hospital_start_time',
             'hospitals.close_at as hospital_end_time',
-            'doctor_schedules.id as availability_id',
-            'doctor_schedules.day',
-            'doctor_schedules.start_time',
-            'doctor_schedules.end_time',
             DB::raw('COALESCE(AVG(reviews.rating), 0) as average_rating'),
             DB::raw('COUNT(reviews.id) as reviews_count')
         )
@@ -68,13 +66,33 @@ public function index()
             'hospitals.name',
             'hospitals.city',
             'hospitals.open_at',
-            'hospitals.close_at',
-            'doctor_schedules.id',
-            'doctor_schedules.day',
-            'doctor_schedules.start_time',
-            'doctor_schedules.end_time'
+            'hospitals.close_at'
         )
         ->get();
+
+    // Attach availability as nested array without duplicating doctor rows
+    $doctorProfileIdToAvailability = DoctorSchedule::whereIn('doctor_id', $doctors->pluck('doctor_profile_id'))
+        ->select('id as availability_id', 'doctor_id', 'day', 'start_time', 'end_time')
+        ->get()
+        ->groupBy('doctor_id');
+
+    $doctors = $doctors->map(function ($doctor) use ($doctorProfileIdToAvailability) {
+        $availability = ($doctorProfileIdToAvailability[$doctor->doctor_profile_id] ?? collect())
+            ->values()
+            ->map(function ($slot) {
+                return [
+                    'availability_id' => $slot->availability_id,
+                    'day' => $slot->day,
+                    'start_time' => $slot->start_time,
+                    'end_time' => $slot->end_time,
+                ];
+            });
+
+        $asArray = (array) $doctor;
+        unset($asArray['doctor_profile_id']);
+        $asArray['availability'] = $availability;
+        return $asArray;
+    });
 
     return $this->successResponse($doctors, 'Success', 200);
 }
@@ -84,9 +102,10 @@ public function index()
         $doctor = DoctorProfile::join('users', 'doctor_profiles.user_id', '=', 'users.id')
         ->join('hospitals', 'doctor_profiles.hospital_id', '=', 'hospitals.id')
         ->join('specialists', 'doctor_profiles.specialist_id', '=', 'specialists.id')
-        ->leftJoin('doctor_schedules', 'doctor_profiles.id', '=', 'doctor_schedules.doctor_id')
+        // ->leftJoin('doctor_schedules', 'doctor_profiles.id', '=', 'doctor_schedules.doctor_id')
         ->leftJoin('reviews', 'users.id', '=', 'reviews.doctor_id')
         ->select(
+            'doctor_profiles.id as doctor_profile_id',
             'doctor_profiles.about',
             'doctor_profiles.experience_years',
             'doctor_profiles.price_per_hour',
@@ -103,10 +122,6 @@ public function index()
             'hospitals.city as hospital_city',
             'hospitals.open_at as hospital_start_time',
             'hospitals.close_at as hospital_end_time',
-            'doctor_schedules.id as availability_id',
-            'doctor_schedules.day',
-            'doctor_schedules.start_time',
-            'doctor_schedules.end_time',
             DB::raw('COALESCE(AVG(reviews.rating), 0) as average_rating'),
             DB::raw('COUNT(reviews.id) as reviews_count')
         )
@@ -128,23 +143,24 @@ public function index()
             'hospitals.name',
             'hospitals.city',
             'hospitals.open_at',
-            'hospitals.close_at',
-            'doctor_schedules.id',
-            'doctor_schedules.day',
-            'doctor_schedules.start_time',
-            'doctor_schedules.end_time'
+            'hospitals.close_at'
         )
         ->first();
         if (!$doctor) {
             return $this->errorResponse('Doctor not found', 404);
         }
-        return $this->successResponse($doctor, 'Doctor retrieved successfully', 200);
+
+        // Append availability
+        $availability = DoctorSchedule::where('doctor_id', $doctor->doctor_profile_id)
+            ->select('id as availability_id', 'day', 'start_time', 'end_time')
+            ->get();
+
+        $asArray = (array) $doctor;
+        unset($asArray['doctor_profile_id']);
+        $asArray['availability'] = $availability;
+
+        return $this->successResponse($asArray, 'Doctor retrieved successfully', 200);
     }
-
-
-
-
-
 
 
 
