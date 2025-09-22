@@ -82,10 +82,16 @@ Route::get('pages/{type}', [PagesController::class, 'show']);
 Route::get('faqs', [FaqController::class, 'index']);
 Route::get('faqs/{id}', [FaqController::class, 'show']);
 
+
+Route::get('doctors', [DoctorController::class, 'index']);
+Route::get('doctors/search', [DoctorController::class, 'search']);
+Route::get('doctors/{id}', [DoctorController::class, 'show']);
+Route::get('specialities', [SpecialistController::class, 'index']);
+Route::get('specialities/{id}', [SpecialistController::class, 'show']);
+
+Route::get('doctors/{doctorId}/reviews', [ReviewController::class, 'index']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('doctors', [DoctorController::class, 'index']);
-    Route::get('doctors/search', [DoctorController::class, 'search']);
-    Route::get('doctors/{id}', [DoctorController::class, 'show']);
 
     // Favourites (Doctors)
     Route::get('favourites/doctors', [FavouriteController::class, 'index']);
@@ -93,13 +99,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('favourites/doctors/{doctorId}', [FavouriteController::class, 'destroy']);
 
     // Reviews
-    Route::get('doctors/{doctorId}/reviews', [ReviewController::class, 'index']);
     Route::post('doctors/{doctorId}/reviews', [ReviewController::class, 'store']);
 
-    Route::get('specialities', [SpecialistController::class, 'index']);
     Route::get('searchHistories', [SearchHistoryController::class, 'searchHistory']);
     Route::post('searchHistories', [SearchHistoryController::class, 'storeSearchHistory']);
-    Route::get('specialities/{id}', [SpecialistController::class, 'show']);
 });
 
 
