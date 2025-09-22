@@ -86,9 +86,12 @@ public function index()
                     'start_time' => $slot->start_time,
                     'end_time' => $slot->end_time,
                 ];
-            });
+            })
+            ->toArray();
 
-        $asArray = (array) $doctor;
+        $asArray = ($doctor instanceof \Illuminate\Database\Eloquent\Model)
+            ? $doctor->getAttributes()
+            : (array) $doctor;
         unset($asArray['doctor_profile_id']);
         $asArray['availability'] = $availability;
         return $asArray;
@@ -153,9 +156,20 @@ public function index()
         // Append availability
         $availability = DoctorSchedule::where('doctor_id', $doctor->doctor_profile_id)
             ->select('id as availability_id', 'day', 'start_time', 'end_time')
-            ->get();
+            ->get()
+            ->map(function ($slot) {
+                return [
+                    'availability_id' => $slot->availability_id,
+                    'day' => $slot->day,
+                    'start_time' => $slot->start_time,
+                    'end_time' => $slot->end_time,
+                ];
+            })
+            ->toArray();
 
-        $asArray = (array) $doctor;
+        $asArray = ($doctor instanceof \Illuminate\Database\Eloquent\Model)
+            ? $doctor->getAttributes()
+            : (array) $doctor;
         unset($asArray['doctor_profile_id']);
         $asArray['availability'] = $availability;
 
@@ -182,10 +196,11 @@ public function index()
             ->join('doctor_profiles as dp', 's.id', '=', 'dp.specialist_id')
             ->join('users as u', 'dp.user_id', '=', 'u.id')
             ->join('hospitals as h', 'dp.hospital_id', '=', 'h.id')
-            ->leftJoin('doctor_schedules as ds', 'dp.id', '=', 'ds.doctor_id')
-            ->join('locations as l', function ($join) {
+            // ->leftJoin('doctor_schedules as ds', 'dp.id', '=', 'ds.doctor_id') // removed to avoid duplicates
+            ->leftJoin('reviews as r', 'u.id', '=', 'r.doctor_id')
+            ->leftJoin('locations as l', function ($join) {
                 $join->on('u.id', '=', 'l.addressable_id')
-                    ->where('l.addressable_type', '=', 'user');
+                    ->where('l.addressable_type', '=', 'App\\Models\\User');
             })
             ->select(
                 'dp.id as doctor_profile_id',
@@ -208,10 +223,8 @@ public function index()
                 'h.city as hospital_city',
                 'h.open_at as hospital_start_time',
                 'h.close_at as hospital_end_time',
-                'ds.id as availability_id',
-                'ds.day',
-                'ds.start_time',
-                'ds.end_time'
+                DB::raw('COALESCE(AVG(r.rating), 0) as average_rating'),
+                DB::raw('COUNT(r.id) as reviews_count')
             );
 
         if (!empty($queryParam)) {
@@ -224,7 +237,57 @@ public function index()
             });
         }
 
+        $query->groupBy(
+            'dp.id',
+            'dp.about',
+            'dp.experience_years',
+            'dp.price_per_hour',
+            'u.id',
+            'u.name',
+            'u.email',
+            'u.phone',
+            'u.avatar',
+            'l.city',
+            'l.address',
+            's.id',
+            's.name_en',
+            's.name_ar',
+            's.description',
+            'h.id',
+            'h.name',
+            'h.city',
+            'h.open_at',
+            'h.close_at'
+        );
+
         $doctors = $query->get();
+
+        // Attach availability for the returned doctor profiles
+        $doctorProfileIdToAvailability = DoctorSchedule::whereIn('doctor_id', $doctors->pluck('doctor_profile_id'))
+            ->select('id as availability_id', 'doctor_id', 'day', 'start_time', 'end_time')
+            ->get()
+            ->groupBy('doctor_id');
+
+        $doctors = $doctors->map(function ($doctor) use ($doctorProfileIdToAvailability) {
+            $availability = ($doctorProfileIdToAvailability[$doctor->doctor_profile_id] ?? collect())
+                ->values()
+                ->map(function ($slot) {
+                    return [
+                        'availability_id' => $slot->availability_id,
+                        'day' => $slot->day,
+                        'start_time' => $slot->start_time,
+                        'end_time' => $slot->end_time,
+                    ];
+                })
+                ->toArray();
+
+            $asArray = ($doctor instanceof \Illuminate\Database\Eloquent\Model)
+                ? $doctor->getAttributes()
+                : (array) $doctor;
+            unset($asArray['doctor_profile_id']);
+            $asArray['availability'] = $availability;
+            return $asArray;
+        });
 
         return $this->successResponse($doctors, 'Doctors retrieved successfully', 200);
     }
